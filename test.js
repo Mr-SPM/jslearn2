@@ -1159,18 +1159,18 @@ window.onhashchange = function () {
     absolute 布尔值，表示设备是否返回一个绝对值
     compassCalibrated  布尔值，表示设备的指南者是否校准过
 */
-window.ondeviceorientation = function () {
-    msg.textContent = '设备方向变化';
-}
+// window.ondeviceorientation = function () {
+//     msg.textContent = '设备方向变化';
+// }
 /* 检测设备是否移动 devicemotion
     acceleration {x: y: z:} 各轴上的加速度，不考虑重力
     accelerationIncludingGravity {x: y: z:}  考虑重力
     interval  以毫秒表示的时间值，常量
     ratationRate {alpha, beta, gamma}  表示方向
  */
-window.ondevicemotion = function () {
-    msg.textContent = '设备正在移动！';
-}
+// window.ondevicemotion = function () {
+//     msg.textContent = '设备正在移动！';
+// }
 /* 触摸与手势事件
     touchstart
     touchmove
@@ -1247,3 +1247,135 @@ document.getElementById('fakeEvent').onclick = function () {
 
 }
 // 事件结束
+
+/* 表单脚本
+    表单是由<form>元素来表示的，在js中，对应的则是HTMLForm-Element 类型（继承了HTMLElement），下面是它独有的属性和方法
+    acceptCharset:服务器能够处理的字符集
+    action:接受请求的URL
+    elements:表单所中所有控件的集合
+    enctype:请求的编码类型
+    length:表单中控件的数量
+    method: 要发送的HTTP请求类型
+    name: 表单的名称
+    reset():将所有表单域重置为默认值
+    submit():提交表单
+    target: 用于发送求情和接受响应的窗口名称
+    获取引用方式：1.getElementById()  2. document.forms
+    提交表单：<input> <button> 将type 设置为 “submit”, 图像按钮则是 input  type 设置为'image'
+    重置表单： <input> <button> 将type 设置为 "reset"
+    表单字段共有的属性：
+    disabled form name readOnly tabIndex 当前字段的切换（tab）序号 type 当前字段的类型（“checkbox”，“radio”等），value 
+    每个表单字段都有2个方法，focus()和blur()
+    HTML5为表单新增了一个autofocus属性
+    共有的表单字段事件  blur change focus 
+ */
+// 初始化表单监听
+function initFormElement() {
+    var myForm = document.getElementById('myform');
+    console.log(myForm.elements);
+    // myForm.elements['name']  可以通过元素的name获取引用
+    var formInput = document.getElementById('formInput');
+    formInput.onblur = function () {
+        msg.textContent = '表单Input失焦';
+    };
+    formInput.onchange = function () {
+        msg.textContent = '表单Input失焦，value 改变';
+    };
+    formInput.onfocus = function () {
+        msg.textContent = '表单Input聚焦';
+        formInput.style.backgroundColor = "yellow";
+    };
+    formInput.onselect = function () {
+        //IE8 不支持  但有另外一种解决方案
+        if (!document.selection) {
+            msg.textContent = '选中了' + formInput.value.substring(formInput.selectionStart, formInput.selectionEnd);
+        } else {
+            msg.textContent = '选中了' + document.selection.createRange().text;
+        }
+    };
+    // 过滤输入
+    formInput.onkeypress = function () {
+        if (!event.ctrlKey) {
+            if (/\d/.test(String.fromCharCode(event.keyCode))) {
+                event.preventDefault();
+            }
+        }
+    };
+};
+var initFormBtn = document.getElementById('initFormBtn');
+initFormBtn.onclick = function () {
+    this.textContent = "表单监听已初始化！";
+    this.setAttribute('disabled', 'true');
+    initFormElement();
+}
+
+/* 文本框脚本
+    input size设置文本框能够显示的字符数，value 初始值，maxlength 可接受的最大字符数
+    textarea 指定文本框大小 rows,cols
+ */
+var updateBtn = document.getElementById('updateInput');
+updateBtn.onclick = function () {
+    // 修改input并选中
+    let input = document.getElementById('formInput');
+    input.value = 'input已被设置！';
+    input.setAttribute('maxlength', 1);
+    // 选择文本
+    input.select();
+    // 选择部分文本
+    input.setSelectionRange(1, 3);
+    /* IE8方案
+    var range = input.createTextRange();
+    range.collapse(true);
+    range.moveStart('dddd', 0);
+    range.moveEnd('dddd', 2);
+    range.select();
+    */
+    // 修改area
+    let area = document.getElementById('formArea');
+    area.value = 'area被顺带修改了！';
+    area.rows = 1;
+    area.cols = 30;
+}
+/* 操作剪贴板
+    要访问剪贴板事件期间的数据，可以使用clipboardData 对象（在IE中是window对象的属性，而在其他浏览器中是event属性，所以大多数浏览器只有在处理剪贴板事件时clipboardData对象）
+    方法： getData() 接受一个参数 IE中 （text,url） 其他浏览器是 MIME类型 ，可用用text 代表 'text/plain'
+          setData()   第一个参数也是数据类型（但是其他浏览器需要写成‘text/plain’），第二个则是文本
+          clearData()
+ */
+function initJTB() {
+    let input = document.getElementById('formInput');
+    input.onbeforecopy = function () {
+        msg.textContent = '我要开始复制了！';
+    };
+    input.oncopy = function () {
+
+        msg.textContent = '复制了！' + (event.clipboardData ? event.clipboardData.getData('text') : window.clipboardData.getData('text'));
+    };
+    input.onbeforecut = function () {
+        msg.textContent = '我要开始剪切了！';
+    };
+    input.oncut = function () {
+        msg.textContent = '剪切了！' + (event.clipboardData ? event.clipboardData.getData('text') : window.clipboardData.getData('text'));;
+    };
+    input.onbeforepaste = function () {
+        msg.textContent = '我要开始黏贴了！';
+    };
+    input.onpaste = function () {
+        msg.textContent = '黏贴了！' + (event.clipboardData ? event.clipboardData.getData('text') : window.clipboardData.getData('text'));;
+    };
+
+}
+document.getElementById('myclipboard').onclick = initJTB();
+/*自动切换焦点 下面例子当输入框输入值等于maxLength时自动切换 */
+document.getElementById('autoChangeInput').onkeyup = function () {
+    if (event.target.value.length == event.target.maxLength) {
+        //document.getElementById('formInput').focus();  这种是写死的,比较蠢
+        let form = event.target.form;
+        for (let i = 0, l = form.elements.length; i < l - 1; i++) {
+            if (form.elements[i] == event.target) {
+                form.elements[i + 1].focus();
+                return;
+            }
+        }
+    }
+}

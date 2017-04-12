@@ -108,6 +108,16 @@
         <li id='two'>事件2</li>
         <li id="three">事件2</li>
     </ul>
+    <form id="myform">
+        <input type="text" placeholder="到了6个字符自动切换到下一个输入框" maxlength="6" id='autoChangeInput'>
+        <input type="text" placeholder="这是一个没什么用的输入框" id="formInput" maxlength="10" />
+        <textarea name="formArea" id="formArea" cols="30" rows="10"></textarea>
+        <button type="submit">提交</button>
+        <button type="reset">重置</button>
+        <button type="button" id="initFormBtn">初始化表单监听</button>
+        <button type="button" id="updateInput">更新表单input设置</button>
+    </form>
+    <button id="myclipboard">初始化剪贴板事件</button>
     <div class="footer"> 尾巴</div>
     <span class="ani">动起来</span>
     <input type="text" name="focusTest" placeholder="测试焦点获得" id="myFocus">
