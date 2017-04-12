@@ -109,8 +109,9 @@
         <li id="three">事件2</li>
     </ul>
     <form id="myform">
-        <input type="text" placeholder="到了6个字符自动切换到下一个输入框" maxlength="6" id='autoChangeInput'>
+        <input type="text" placeholder="（必填）到了6个字符自动切换到下一个输入框" maxlength="6" id='autoChangeInput' required>
         <input type="text" placeholder="这是一个没什么用的输入框" id="formInput" maxlength="10" />
+        <input type="number" placeholder="h5 pattern 校验，只允许数字和字母" pattern="\w+" />
         <textarea name="formArea" id="formArea" cols="30" rows="10"></textarea>
         <button type="submit">提交</button>
         <button type="reset">重置</button>

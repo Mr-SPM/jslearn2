@@ -1366,6 +1366,7 @@ function initJTB() {
 
 }
 document.getElementById('myclipboard').onclick = initJTB();
+
 /*自动切换焦点 下面例子当输入框输入值等于maxLength时自动切换 */
 document.getElementById('autoChangeInput').onkeyup = function () {
     if (event.target.value.length == event.target.maxLength) {
@@ -1379,3 +1380,9 @@ document.getElementById('autoChangeInput').onkeyup = function () {
         }
     }
 }
+
+/* HTML5约束验证API （FF4+,Safari5+,Chrome,Opera10+）
+// 必填字段 例： <input type="text" name="username" required>  会组织表单提交并在字段下方弹出帮助框
+// 新增输入类型 email url number 等
+// 输入模式  在文本字段新增 pattern 属性， 值为一个正则表达式，用于匹配文本框中的值 亲测兼容性并不好  检测浏览器是否支持  "pattern" in document.createElement('input');
+ */
