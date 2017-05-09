@@ -4,129 +4,83 @@
 <head>
     <meta charset="utf-8" />
     <title>test</title>
-    <style>
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6,
-        div {
-            text-align: center;
-            font-family: Arial, Helvetica, sans-serif
-        }
-        
-        body {
-            background: url('./20898.jpg');
-            background-repeat: no-repeat;
-            background-position: 10px 10px;
-        }
-        
-        a {
-            text-decoration: line-through;
-            color: black;
-            text-shadow: 0 0 3px #ff0000;
-            word-spacing: 10px;
-        }
-        
-        .nav {
-            color: blue;
-            /*如果你定义了颜色属性，你还必须定义背景色属性*/
-            background-color: #fff;
-            /*justify 展开为宽度相等*/
-            text-align: center;
-            /*文本转换*/
-            text-transform: uppercase;
-        }
-        
-        .indent {
-            letter-spacing: 1px;
-            line-height: 100%;
-            direction: rtl;
-            white-space: pre-wrap;
-        }
-        
-        @keyframes dd {
-            from {
-                left: 0px;
-                background-color: red;
-            }
-            to {
-                left: 200px;
-                background-color: yellow;
-            }
-        }
-        
-        .ani {
-            display: block;
-            width: 100px;
-            height: 100px;
-            position: fixed;
-            animation: dd 5s;
-        }
-        
-        .menu {
-            width: 200px;
-            height: 100px;
-            background-color: antiquewhite;
-        }
-        
-        #keyCtn {
-            width: 100%;
-            height: 100px;
-        }
-        
-        .area {
-            width: 80%;
-            height: 100px;
-            border: 1px solid black;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="./reset.css">
+    <link rel="stylesheet" type="text/css" href="./common.css">
 </head>
 
 <body>
-    <h1>这是一个测试页面</h1>
-    <h2>用于html+css学习</h2>
-    <div class="nav">menu
-        <a href='http://www.baidu.com'>去百度看看</a>
+    <div class="nav">
+        <ul class="navList">
+            <li class="navItem" onclick="toggleMouseArea('mouseCtn')">鼠标测试</li>
+            <li class="navItem" onclick="toggleMouseArea('keyCtnFather')">键盘测试</li>
+            <li class="navItem" onclick="toggleMouseArea('eventBubbleCtn')">事件冒泡测试</li>
+            <li class="navItem" onclick="toggleMouseArea('canvasCtn')">Canvas</li>
+            <li class="navItem" onclick="toggleMouseArea('eventProCtn')">事件优化</li>
+            <li class="navItem" onclick="toggleMouseArea('eventETCCtn')">杂项</li>
+            <li class="navItem" onclick="toggleMouseArea('functionsCtn')">Functions</li>
+        </ul>
     </div>
-    <div class='menu' id="leftMenu">
-        鼠标点击区域
+
+    <div id="mouseCtn" class="fatherDiv" style="display:none">
+        <div class='commonArea' id="clickArea">
+            鼠标点击区域
+        </div>
+        <div class="commonArea" id="mouseWheel">鼠标滚轮监测区</div>
+        <div class="commonArea" id="mouseXY">监测鼠标点击坐标轴</div>
+        <div class="footer">尾巴,阻止右键默认行为</div>
     </div>
-    <div id="mouseXY"></div>
-    <div id="mouseWheel">鼠标滚轮监测区</div>
-    <div class="content">
-        主页面
-        <span class="indent">间隔1个px的文章
-            儿子
+    <div class="content" style="display:none" id="eventBubbleCtn">
+        <span class="commonArea indent">儿子1：不会冒泡
         </span>
-        <span>这里会告诉爸爸被点击</span>
+        <span class="commonArea">儿子2：这里会告诉爸爸被点击</span>
     </div>
-    <textarea type="text" placeholder="键盘事件" id="keyCtn"></textarea>
-    <ul id='myDelegation'>
-        <li id='one'>事件1</li>
-        <li id='two'>事件2</li>
-        <li id="three">事件2</li>
-    </ul>
-    <form id="myform">
-        <input type="text" placeholder="（必填）到了6个字符自动切换到下一个输入框" maxlength="6" id='autoChangeInput' required>
-        <input type="text" placeholder="这是一个没什么用的输入框" id="formInput" maxlength="10" />
-        <input type="number" placeholder="h5 pattern 校验，只允许数字和字母" pattern="\w+" />
-        <textarea name="formArea" id="formArea" cols="30" rows="10"></textarea>
-        <button type="submit">提交</button>
-        <button type="reset">重置</button>
-        <button type="button" id="initFormBtn">初始化表单监听</button>
-        <button type="button" id="updateInput">更新表单input设置</button>
-    </form>
-    <button id="myclipboard">初始化剪贴板事件</button>
-    <div class="footer"> 尾巴</div>
-    <span class="ani">动起来</span>
-    <input type="text" name="focusTest" placeholder="测试焦点获得" id="myFocus">
-    <button type="button" id="myBtn">测试按钮</button>
-    <button id="fakeEvent">模拟事件按钮</button>
+    <div class="fatherDiv" id="canvasCtn" style="display:none">
+        <img src="./gundum.jpg" alt="加载失败！" width="100" height="80">
+        <canvas id="mycanvas" width="500" height="200">这是一块canvas</canvas>
+        <button id='paintBtn'>开始绘图</button>
+    </div>
+    <div class="fatherDiv" id="keyCtnFather" style="display:none">
+        <textarea type="text" placeholder="键盘事件" class="keyEventCtn" id="keyCtn">
+        </textarea>
+    </div>
+    <div class="fatherDiv" id="eventProCtn" style="display:none">
+        <ul id='myDelegation'>
+            <li class='liItem' id='one'>事件1</li>
+            <li class='liItem' id='two'>事件2</li>
+            <li class='liItem' id="three">事件2</li>
+        </ul>
+    </div>
+    <div id="formCtn" style="display:none">
+        <form id="myform">
+            <input type="text" placeholder="（必填）到了6个字符自动切换到下一个输入框" maxlength="6" id='autoChangeInput' required>
+            <input type="text" placeholder="这是一个没什么用的输入框" id="formInput" maxlength="10" />
+            <input type="text" placeholder="h5 pattern 校验，只允许数字和字母" pattern="\w+" id="h5input" />
+            <textarea name="formArea" id="formArea" cols="30" rows="10"></textarea>
+            <button type="submit">提交</button>
+            <button type="reset">重置</button>
+            <button type="button" id="initFormBtn">初始化表单监听</button>
+            <button type="button" id="updateInput">更新表单input设置</button>
+            <button id="initSelect">初始化select</button>
+        </form>
+        <button id="myclipboard">初始化剪贴板事件</button>
+    </div>
+    <div id="eventETCCtn" style="display:none">
+        <input type="text" name="focusTest" placeholder="测试焦点获得" id="myFocus">
+        <button type="button" id="myBtn">测试按钮</button>
+        <button id="fakeEvent">模拟事件按钮</button>
+        <div id="deviceCtn" class="area">设备拖拽区域</div>
+        <iframe name="richedit" width="200px" height="100px" src="./fulltext.html"></iframe>
+        <div id="richtext" contenteditable></div>
+        <div id="dragitem" class="area" draggable="true">拖拽区块</div>
+        <div id="dragtarget" class="area">拖拽目标区域</div>
+    </div>
+    <div class="functionsCtn">
+
+    </div>
     <div id="message" class="area">提示区域</div>
-    <div id="deviceCtn" class="area">设备拖拽区域</div>
+    <span class="ani">动起来</span>
 </body>
 <script src='./test.js'></script>
+<script src='./es6.js'></script>
 
 </html>

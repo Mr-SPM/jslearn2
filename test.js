@@ -1,3 +1,11 @@
+function toggleMouseArea(moduleName) {
+    let area = document.getElementById(moduleName);
+    if (area.style.display === 'none') {
+        area.style.display = '';
+    } else {
+        area.style.display = 'none';
+    }
+}
 var base = {
     // 组建化继承
     extendClass: function (father, obj) {
@@ -38,7 +46,7 @@ var testItems = {
     str: "admin",
     reg: new RegExp("\d", "i")
 }
-var objLearn = function () {
+var ObjLearn = function () {
     this.forinTest = function (items) {
         if (items.constructor == Object) {
             for (item in items) {
@@ -95,7 +103,7 @@ var arrayLearn = {
             case 3:
                 result = array.reverse();
                 break;
-                // item - next >0 asc <0 esc
+            // item - next >0 asc <0 esc
             case 4:
                 result = array.sort(function (item, next) {
                     return item - next;
@@ -159,9 +167,9 @@ timeoutLearn.setIntervalTest = function (time) {
         }, 1000
     );
 }
-base.extendClass(objLearn, timeoutLearn);
-var t = new objLearn();
-
+base.extendClass(ObjLearn, timeoutLearn);
+var t = new ObjLearn();
+//  修复数组实验
 function repairArray(array, num) {
     let temp = array[0] - num;
     let startList = [];
@@ -228,7 +236,7 @@ var newClass = new ClassTest(testItems);
 var objtest = {
     withTest: function () {
         var qs = '?debug=true';
-        with(location) {
+        with (location) {
             var href = href + qs;
         }
         return href;
@@ -337,7 +345,7 @@ function CwjClass() {
         console.log(Math);
     }
 }
-var t = new CwjClass();
+var cc = new CwjClass();
 // chapter 6 面向对象的程序设计
 // 组合使用构造函数模式和原型模式
 function OOtest(name, age) {
@@ -431,7 +439,7 @@ var instance4 = new SubType2('fd', 23);
 
 // 原型式继承
 function object(o) {
-    function F() {};
+    function F() { };
     F.prototype = o;
     return new F();
 }
@@ -661,6 +669,8 @@ window.onload = function () {
         console.log('混杂模式！');
     }
     msg = document.getElementById('message');
+    // 本地用会有跨域问题
+    //frames['richedit'].document.designMode = 'on';
 
 }
 
@@ -968,14 +978,15 @@ btn.removeEventListener('click', fun, false); // 生效
 // 事件冒泡测试，可取消冒泡
 var father = document.getElementsByClassName('content')[0];
 father.onclick = function () {
-    console.log('儿子被点击了！')
+    msg.textContent = '儿子被点击了！';
 };
 father.children[0].onclick = function () {
-    console.log('我被点击了！而且不告诉爸爸！')
+
+    msg.textContent = '我被点击了！而且不告诉爸爸！';
     event.stopPropagation();
 };
 father.children[1].onclick = function () {
-    console.log('我被点击了！告诉爸爸！');
+    msg.textContent = '我被点击了！告诉爸爸！';
 };
 /* IE中的事件对象 
     在使用DOM0级方法添加事件处理程序时，event对象作为window对象的一个属性存在。 var event = window.event;
@@ -1004,7 +1015,7 @@ myInput.onfocus = function () {
 /* 鼠标与滚轮事件 
     下面展示了DOM3事件定义的9个鼠标事件
 */
-var clickArea = document.getElementById('leftMenu');
+var clickArea = document.getElementById('clickArea');
 clickArea.onclick = function () {
     this.textContent = '我被点击了！';
 }
@@ -1038,7 +1049,7 @@ clickArea.onmouseover = function () {
 }
 // 客户区坐标位置,页面坐标位置，屏幕坐标位置
 document.body.onclick = function () {
-    clickArea.textContent = `鼠标当前位于 x:${event.clientX} y:${event.clientY}\n 鼠标当前位于页面 x:${event.pageX} y:${event.pageY} \n 鼠标当前位于屏幕 x:${event.screenX} y:${event.screenY}`;
+    clickArea.textContent = `鼠标当前位于 x:${event.clientX} y:${event.clientY}\n\r 鼠标当前位于页面 x:${event.pageX} y:${event.pageY} \n\r 鼠标当前位于屏幕 x:${event.screenX} y:${event.screenY}`;
     var array = [];
     if (event.shiftKey) {
         array.push('shift');
@@ -1053,7 +1064,6 @@ document.body.onclick = function () {
         array.push('meta');
     }
     clickArea.textContent += array.join(',');
-
 }
 // 页面中长点击移动
 var currentX = 0;
@@ -1064,7 +1074,7 @@ document.body.onmousedown = function () {
     console.log(event.button);
 }
 document.body.onmouseup = function () {
-    document.getElementById('mouseXY').textContent = `鼠标移动了 x:${event.pageX - currentX} y:${event.pageY -currentY}`;
+    document.getElementById('mouseXY').textContent = `鼠标移动了 x:${event.pageX - currentX} y:${event.pageY - currentY}`;
     currentX = event.pageX;
     currentY = event.pageY;
 }
@@ -1136,17 +1146,17 @@ document.addEventListener('DOMContentLoaded', function () {
 document.onreadystatechange = function () {
     console.log(document.readyState);
 }
-// pageshow 和 pagehide 例子为pageshow， pagehide 正好相反
-(function () {
-    // showCount 会在刷新是重置，但是如果是前进\后退时则会缓存
-    var showCount = 0;
-    window.onpageshow = function () {
-        //虽然绑定在window，但实际目标是document
-        showCount++;
-        msg.textContent = '页面完全加载完毕！' + showCount;
+    // pageshow 和 pagehide 例子为pageshow， pagehide 正好相反
+    (function () {
+        // showCount 会在刷新是重置，但是如果是前进\后退时则会缓存
+        var showCount = 0;
+        window.onpageshow = function () {
+            //虽然绑定在window，但实际目标是document
+            showCount++;
+            msg.textContent = '页面完全加载完毕！' + showCount;
 
-    }
-}());
+        }
+    }());
 // hashchange 事件 当url参数列表变化时触发
 window.onhashchange = function () {
     msg.textContent = `old URL: ${event.oldURL}  new URL: ${event.newURL}`
@@ -1365,7 +1375,7 @@ function initJTB() {
     };
 
 }
-document.getElementById('myclipboard').onclick = initJTB();
+document.getElementById('myclipboard').onclick = initJTB;
 
 /*自动切换焦点 下面例子当输入框输入值等于maxLength时自动切换 */
 document.getElementById('autoChangeInput').onkeyup = function () {
@@ -1386,3 +1396,648 @@ document.getElementById('autoChangeInput').onkeyup = function () {
 // 新增输入类型 email url number 等
 // 输入模式  在文本字段新增 pattern 属性， 值为一个正则表达式，用于匹配文本框中的值 亲测兼容性并不好  检测浏览器是否支持  "pattern" in document.createElement('input');
  */
+// 检验有效性 checkValidity() 所有表单字段都有这个方法 下面举例
+/* validity对象输出错误类型举例
+    customError 如果设置了setCustomValidity()，则为true,否则为false
+    patternMismatch,rangeOverflow,rangeUnderflow,stepMismtach,tooLong,typeMismatch,valid 其他的都是false则返回true,valueMissing required没有值
+    禁用验证 novalidate 告诉表单不校验
+*/
+var h5input = document.getElementById('h5input')
+h5input.onblur = function () {
+    if (!h5input.checkValidity()) {
+        h5input.value = `输入值不符合pattern:${h5input.getAttribute('pattern')} 校验`;
+        h5input.select();
+        // 输出错误
+        console.log(h5input.validity);
+    }
+}
+
+/* 选择框脚本 select option
+    option 对象
+    index label selected text value
+    选择框的change事件出发，只需要选中了选项就会触发
+    获取选择项，遍历options selected
+    下面举例
+    
+ */
+function initSelectT(event, optionArray) {
+    if (!optionArray) {
+        optionArray = ['初始1', '初始2', '初始3', '初始4', '初始5',]
+    }
+    var select = document.createElement('select');
+    select.multiple = true; // 是否允许多项选择
+    select.innerHTML = '<option>初始option</option>';
+    for (let i = 0, l = optionArray.length; i < l; i++) {
+        let newOption = document.createElement('option');
+        newOption.value = optionArray[i];
+        newOption.textContent = optionArray[i];
+        select.add(newOption, select.firstChild[0]);
+    } // 1 新增option   2 相关项relOption 之前
+    let index = 0; // 给定位置的选项
+    select.remove(index);
+    select.selectedIndex = 0; // 如果没有选中项 值为-1
+    select.size = 4; // 选择框中可见的行数
+    select.value == optionArray[0]; // true 没有选中时是空字符串，一个或多个的时候显示第一个 
+    console.log(select.options);
+    document.body.appendChild(select);
+}
+document.querySelector('#initSelect').onclick = initSelectT;
+/* 表单序列化 */
+/* 富文本编辑框
+    这一技术的本质就是在页面中嵌入一个包含空HTML页面的iframe,通过设置designMode属性，这个空白的HTML页面可以被编辑，而编辑对象则是该页面的<body>元素的HTML代码，只有在页面完全加载之后才能设置这个属性。onload设置
+    具体属性不作赘述，感觉没什么卵用
+ */
+/* 使用Canvas绘图 IE9+
+    <canvas>由几组API构成，但并非所有的浏览器都支持所有这些API，除了具备基本绘图能力的2D上下文，<canvas>还建议了一个名为WebGL的3D上下文。但是支持不够好。
+ */
+var mycanvas = document.getElementById('mycanvas');
+document.getElementById('paintBtn').onclick = paint;
+// 检测canvas支持
+function paint() {
+    if (mycanvas.getContext) {
+        let context2d = mycanvas.getContext('2d');
+        //console.log(context2d);
+        /* 2D上下文
+        填充和描边 fillStyle,strokeStyle
+         */
+
+        // 绘制蓝色矩阵
+        context2d.fillStyle = "#0000ff";
+        context2d.fillRect(0, 0, 20, 20);
+        // 红色半透明矩阵
+        context2d.fillStyle = 'rgba(255, 0, 0, 0.5)';
+        context2d.fillRect(10, 10, 30, 30);
+        // 交界处黑色描边修改lineWidth 和 lineCap 线条末端形状
+        context2d.strokeStyle = "black";
+        context2d.strokeRect(10, 10, 10, 10);
+        // 10秒后清除重叠矩形
+        setTimeout(function () {
+            mycanvas.getContext('2d').clearRect(10, 10, 10, 10);
+        }, 10000);
+        /* 绘制路径
+            arc(x,y,radius,startAngle,endAngle,counterclockwise是否按顺时针放下计算)
+            arcTo(x1,y1,x2,y2,radius) 从上一点开始绘制一条弧线
+            bezierCurveTo(c1x,c1y,c2x,c2y,x,y) 从上一点开始绘制一条取现，到(x,y)为止，并已(c1x,c1y)和(c2x,c2y)为控制点
+            lineTo(x,y) 从上一点开始绘制一条直线，到(x,y)为止
+            moveTo(x,y) 将绘图游标移动到(x,y),不画线
+            quadraticCurveTo(cx,cy,x,y) 从上一点开始绘制一条二次曲线，到(x,y)为止，并以(cx,cy)作为控制点
+            rect(x,y,width,height):从(x,y)开始绘制一个矩形
+            closePath() 绘制一条连接到路径起点的线条
+            fill()
+            stroke()
+            clip() 在路径上创建一个剪切区域
+         */
+        context2d.beginPath();
+        context2d.moveTo(30, 30);
+        context2d.lineTo(70, 0);
+        context2d.strokeStyle = 'green';
+        context2d.lineWidth = 5;
+        context2d.stroke();
+        context2d.closePath();
+
+        // 画一个三角形
+        context2d.rotate(Math.PI / 3);
+        context2d.beginPath();
+        context2d.moveTo(70, 0);
+        context2d.lineTo(40, 30);
+        context2d.lineTo(100, 30);
+        context2d.closePath();
+        context2d.fillStyle = 'blue';
+        context2d.fill();
+        context2d.rotate(-Math.PI / 3);
+        // 画一个圆
+        context2d.beginPath();
+        context2d.arc(50, 50, 50, 0, 2 * Math.PI, false);
+        context2d.closePath();
+        context2d.fillStyle = 'rgba(100,200,100,0.7)';
+        // 这个是变换，看下面注释
+        context2d.scale(1.5, 1);
+        context2d.fill();
+        console.log(context2d.isPointInPath(100, 100));
+        /* 绘制文本   fillText() strokeText()  (文本字符串，x,y)
+        属性 font  文本样式、大小、字体
+        textAlign  start、end、left、right、center
+        textBaseLine  top、hanging、middle、alphabetic、ideographic、bottom
+        */
+        context2d.font = 'bold 18px YaHei';
+        context2d.textAlign = 'start';
+        context2d.textBaseLine = 'top';
+        context2d.fillStyle = 'black';
+        context2d.fillText('Hello World', 50, 50);
+        context2d.lineWidth = 1;
+        context2d.strokeText('Hello Myself', 50, 100);
+        /* 变换
+        rotate(angle) scale(scaleX,scaleY)  tranlate(x,y) transform(m1_1,m1_2,m2_1,m2_2,dx,dy) 直接修改变换矩阵，方法是乘以如下矩阵
+        m1_1 m1_2 dx
+        m2_1 m2_2 dy
+        0    0    1
+        setTransform(m1_1,m1_2,m2_1,m2_2,dx,dy) 将矩阵变换为默认状态，然后再调用transform 
+         */
+        /* 绘制图像 drawImage(image,x,y,width 可选,height 可选)
+         */
+        context2d.shadowColor = 'grey';
+        context2d.shadowOffsetX = 5;
+        context2d.shadowOffsetY = 5;
+        context2d.shadowBlur = 10;
+        let img = document.images[0];
+        context2d.drawImage(img, 0, 0, 40, 40);
+        context2d.shadowOffsetX = 0;
+        context2d.shadowOffsetY = 0;
+        context2d.shadowBlur = 0;
+        /* 阴影
+        shadowColor shadowOffsetX shadowOffsetY shandowBlur 模糊的像素数，看上面的图片
+        兼容性并不是很好 IE ,FF4,Opera11兼容的最好
+         */
+        /* 渐变
+        createLinearGradient(x1,y1,x2,y2)     createRadialGradient(x1,y1,radius1,x2,y2,radius2)
+        addColorStop(0-1,color);
+         */
+        let linearGradient = context2d.createLinearGradient(30, 30, 60, 60);
+        linearGradient.addColorStop(0, 'black');
+        linearGradient.addColorStop(0.5, 'white');
+        linearGradient.addColorStop(1, 'black');
+        context2d.fillStyle = linearGradient;
+        context2d.fillRect(30, 30, 30, 30);
+        //let imageData = context2d.getImageData(0, 0, 30, 30);  注意跨域
+        // data[0-3]  red green blue alpha
+        /* 合成 globalAlpha  0-1的值，指定所有绘制的透明度 
+        globalComposition-Operation  表示后绘制的图形怎么样与先绘制的图形结合
+        source-over,source-in,source-out,source-atop,destination-over,destination-in,destination-out,destination-atop,lighter,copy,xor
+        */
+        /* WebGL 太复杂，不赘述 */
+    }
+}
+
+/* HTML5 脚本编程 */
+/* 跨文档消息传递cross-document messaging XDM    ie8+
+postMessage(message,origin) 
+message 最好是用字符串形式发送，如果想传json之类的结构化数据，最好先进行JSON.stringify()
+第二个参数对保障安全通信非常重要，可以防止浏览器把消息发送到不安全的地方。如果origin不匹配文档来源域，则postMessage()什么都不做
+接收到XDM信息的时候，会触发window 对象的message事件。这个事件是以异步形式触发的，触发message处理程序的事件对象包含
+data origin source 发送消息的文档的window对象代理  3个部分组成
+*/
+// window.onmessage = function (event) {
+//     if (event.orgin == 'xxx') {
+//         // 处理 event.data
+//         event.source.postMessage('received', 'yyy');
+//     }
+// }
+
+/* 原生拖放事件
+    拖动某元素时，依次触发：dragstart drag dragend
+    被拖动到一个有效的放置目标上时：依次触发 dragenter, dragover, dragleave 或 drop
+    dataTransfer 对象 为了实现在拖放操作时实现数据交换 
+    getData() setData() 
+    dropEffect    none、move、copy、link
+    effectAllowed   uninitialized、none、move、copy、link、copyLink、copyMove、linkMove、all 
+    
+ */
+// 拖拽区块设置data
+document.getElementById('dragitem').ondragstart = function () {
+    event.dataTransfer.setData('text', '我来啦！');
+};
+// 自定义放置目标，将不允许放置的目标改为允许
+document.getElementById('dragtarget').ondragenter = function () {
+    event.preventDefault();
+};
+document.getElementById('dragtarget').ondragover = function () {
+    console.log(event.dataTransfer.getData('text'));
+    event.preventDefault();
+};
+/* 媒体元素
+属性：autoplay, buffered,bufferedBytes,bufferingRate,bufferingRate,bufferingThrottled,controls,currentLoop,currentSrc,currentTime,defaultPlaybackRate,
+duration,ended,loop,muted,networkState,paused,playbackRate,played,readyState,seekable,seeking,src,start,totalBytes,videoHeight,videoWidth,volume
+事件：abort,canplay,canplaythrough,canshowcurrentframe,dataunavailable,durationchange,emptied,empty,ended,error,load,loadeddata,loametadata,loadsstart,pause,play,playing,progress,ratechange,seeked,seeking,stalled,timeupdate,volumechange,waiting
+检测解码器支持情况： canPlayType() 返回值： probably ,maybe ,""
+ */
+
+/* 历史状态管理
+现代Web应用中，用户的每次操作不一定会打开一个全新的页面，因此‘后退’和‘前进’按钮就也失去了作用，为了解决这个问题，首选使用‘hashchange’ 事件。HTML5通过更新history对象为管理历史状态提供了方便
+histroy.pushState({状态对象},新状态的标题，可选的相对URL)
+该方法会把新的状态信息加入历史状态栈，浏览器地址栏也会变成新的相对URL，但是浏览器并不会真的向服务器发送请求，即使状态改变之后查询
+location.href 也会返回与地址栏中相同的地址。
+replaceState({状态对象},新状态的标题) 
+ */
+
+/* 错误处理与调试
+try-catch 语句  错误类型：Error EvalError RangeError ReferenceError SyntaxError TypeError URIError
+// 调试技术 console对象 error 错误消息，info 消息性消息记录，log 一般消息，warn 警告消息
+// 抛出错误 throw new Error('one error')
+ */
+
+/* JavaScript与XML 不作赘述 */
+
+/* JSON 序列化对象  JSON.stringify() JSON.parse() */
+
+/* Ajax 与 Comet
+    XMLHttpRequest对象
+    XHR的用法 open(tpye,URL,isAsynchronous)
+    send(data) data:如果不需要通过请求主体发送数据，则必须传入null。
+    收到服务器响应之后，响应的数据会自动填充XHR对象的属性
+    responseText:作为响应主体被返回的文本
+    responseXML:如果响应的内容类型是‘text/xml’或'application/xml'，这个属性中将包含着相应数据的XML DOM文档
+    status:响应的HTTP状态
+    statusText:HTTP状态的说明
+    建议通过status来决定下一步的操作，不要依赖statusText,因为后者在跨浏览器使用时不太可靠。响应主体的内容都会保存到responseText属性中，二人对于非XML数据而言，responseXML属性的值将为null
+    通过检测XHR对象的readyState属性，0 尚未open().1 启动,2 发送， 3 接收 ，4 完成。每次readyState属性的值变化都会触发一次readystatechange事件
+    // 请求
+    GET请求 传入URL末尾的查询字符串必须经过正确的编码 encodeURIComponent()
+    POST请求 需要send() 传入某些数据，由于XHRR最初的设计是为了处理XML，因为可以在此传入XML DOM文档，传入的文档经过序列化之后将作为请求主题被提交到服务器。
+    默认情况下，服务器对POST请求和提交Web表单的请求并不会一视同仁。我们可以使用XHR来模仿表单提交
+*/
+// XHR模仿表单提交
+function fakeSubmit(url, data) {
+    let xhr = new XMLHttpRequest();
+    xhr.open('post', url, true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send(data);
+    return xhr;
+
+}
+// 辅助添加URL末尾的添加查询字符串参数
+function addURLParam(url, name, value) {
+    url += (url.indexOf('?') == -1 ? '?' : '&');
+    url += encodeURIComponent(name) + '=' + encodeURIComponent(value);
+    return url;
+}
+// 初始化XHR
+function initXHRObject() {
+    let xhr = new XMLHttpRequest();
+    xhr.open('post', 'http://xxx.com/test', false);
+    let data = {
+        name: '测试数据',
+        value: '123'
+    };
+    xhr.send(data);
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4) {
+            if (xhr.status >= 200 || xhr.status <= 300 || xhr.status == 304) {
+                console.log(xhr);
+            } else {
+                console.log('接口出错！');
+            }
+        }
+    };
+    /* HTTP头部信息
+    Accept,Accept-Charset,Accept-Encoding,Accept-Language,Connection,Cookie,Host,Referer,User-Agent
+    配置方法： setRequestHeader(name,value)设置自定义的请求头部信息
+    getResponseHeader(name);
+    */
+    xhr.setRequestHeader('MyHeader', 'MyValue');
+    xhr.timeout = 2000;
+    xhr.ontimeout = function () {
+        // 取消请求
+        xhr.abort();
+    }
+
+}
+
+/* XMLHttpRequest 2级
+// FormData 类型 支持类型FF4+,Safari 5+, Chrome,Android 3+
+ */
+function initFormData() {
+    let data = new FormData();
+    if (data) {
+        // 键值对
+        data.append('name', 'cwj');
+        // 表单元素
+        data.append(document.forms[0]);
+        //创建了FormData 实例后可以直接传给XHR 的send()方法
+    }
+}
+/* 超时设定 timeout属性
+如果超过配置的时间后，会调用 ontimeout 
+ */
+/* overrideMimeType()
+用于重写XHR响应的MIME类型，比如服务器返回的MIME类型是‘text/plain’，但数据中实际包含的是XML。responseXML属性中仍然是null,通过调用overrideMimeType()方法，可以保证把响应当作XML而非纯文本来处理
+ */
+/* 进度事件
+loadstart,progress,error,abort,load,loadend
+target 属性指向XHR对象实例
+progress事件，包含额外属性 lengthComputable 进度信息是否可用,position 已经接受的字节数,totalSize 根据Content-Length 响应头部确定的预期字节数
+ */
+/* 跨源资源共享 CORS Cross-Origin Resource Sharing
+    CORS背后的基本思想就是使用自定义的HTTP头部让浏览器与服务器进行沟通，从而决定请求或响应是应该成功还是失败。
+    比如一个简单的使用GET或者POST发送的请求，他没有自定义的头部，而主题内容是text/plain，在发送该请求时，需要给他附加一个额外的Origin头部，包含请求页面的源信息（协议\域名和端口）
+    Origin:http://www.baidu.com
+    如果服务器认为这个请求可以接受，就在Access-Control-Allow-Origin头部回发相同的源信息（公共资源。可以回发‘*’）
+    Access-Control-Allow-Origin:http://www.baidu.com
+    如果没有这个头部，或者有这个头部但源信息不匹配。浏览器就会驳回请求。
+    *请求和响应都不包含cookie
+    // IE对CORS的实现 XDR类型 XDomainRequest
+    cookie 不会随请求发送和响应，只能设置请求头部信息中的Content-Type，不能访问响应头部信息，只支持GET/POST
+    XDR对象Open只支持2个参数，只能是异步请求
+    // 其他浏览器对CORS的实现，使用标准的XHR对象并在open()方法中传入绝对URL即可
+    限制：不能使用setRequestHeader() 设置自定义头部
+            不能发送和接收 cookie
+            调用getAllResponseHeaders()总会返回空字符串
+    带凭据的请求： withCredentials: true
+    如果服务器接受带凭据的请求，会用下面的HTTP头部响应：Access-Control-Allow-Credientials:true
+    其他跨域技术
+    图像Ping：最长用于跟踪用户点击页面或动态广告曝光次数
+             缺点：只能给GET，无法访问服务器响应文本
+    JSONP(JSON with padding):
+        JSONP由2部分组成：回调函数和数据，回调函数是响应到来时应该在页面中调用的函数。回调函数的名字一般是在请求中指定的。而数据就是传入回调函数中的JSON数据
+        http://freegeoip.net/json/?callback=handleResponse
+        JSONP是通过动态<script>元素来使用的，使用时可以为src属性指定一个跨域URL，因为JSONP是有效的JavaScript代码，所以在请求完成后，即在JSONP响应加载到页面中以后，就会立即执行
+        缺点：如果其他域不安全，此时除了完全放弃JSONP调用之外，没有办法追究；其次，要确定JSONP请求是否失败并不容易
+ */
+// JSONP 举例
+function testJSONP() {
+    let script = document.createElement('script');
+    script.src = 'http://freegeoip.net/json/?callback=handleResponse';
+    document.body.appendChild(script);
+}
+// JSONP 回调
+function handleResponse(response) {
+    console.log(response);
+};
+
+/* Comet
+    服务器向页面推送数据的技术，适合处理体育比赛分数和股票报价等
+    实现方式：长轮询：页面发送一个服务器请求，然后服务器一直保持连接打开，直到有数据可发送。发送完数据之后，浏览器关闭连接，随即又发起一个到服务器的新请求（优势在于浏览器都支持）
+    流： 浏览器向服务器发送一个请求，然后服务器保持连接打开，然后周期性的向浏览器发送数据
+    在Firefox,Safari,Opera和Chrome中，通过侦听readystatechange事件以及检测 readyState是否为3，就可以利用XHR对象实现HTTP流
+    // 服务器发送事件 SSE 用于创建到服务器的单向连接，服务器通过这个连接可以发送任意数量的数据。服务器响应的MIME类型必须是text/event-stream
+ */
+function initSSE() {
+    var source = new EventSource('myevents.php');
+    /* 属性 readyState： 0 正连接到服务器 1 打开了连接 2 关闭了连接 
+    事件 open message error 
+    服务器发回的数据以字符串的形势保存在event.data中
+     */
+    source.onmessage = function () {
+        console.log(event.data);
+    }
+    source.close();
+    // 通过id：前缀可以给特定的事件指定一个关联的ID，设置了ID之后，EventSource 对象会跟中上一次触发的事件。如果连接断开，会向服务器发送一个包含名为 Last-Event-ID的特殊HTTP头部请求，以便服务器知道下一次该触发哪个事件
+};
+/* Web Sockets
+只能通过连接发送纯文本数据，对于复杂的数据结构，需要发送前进行序列化
+ */
+function initWebSockets() {
+    // ws 未加密协议，wss 加密协议， 必须传入绝对路径，不受同源策略影响
+    let socket = new WebSocket('ws://www.example.com/sever.php');
+    /* 属性：OPENING(0) OPEN(1) CLOSING(2) CLOSE(3)
+    没有readystatechange事件
+     */
+    let data = {
+        name: 'cwj'
+    };
+    socket.send(JSON.stringify(data));
+    socket.onmessage = function (event) {
+        console.log(event.data);
+    };
+}
+
+/* 高级技巧
+ */
+// 安全的类型检测 由于原生数组的构造函数名与全局作用域无关，因此使用toString()就能返回一直的值
+function isArray(value) {
+    // 检测原生函数或正则表达式，JSON类似 [object Function] [object RegExp]
+    return Object.prototype.toString.call(value) == '[object Array]';
+}
+/* 作用域安全的构造函数
+    如果没有用new ，属性会被映射到window 上
+    所以需要校验this对象确实是正确类型的实例
+*/
+function SaveClass(key, value) {
+    if (this instanceof SaveClass) {
+        this.key = key;
+        this.value = value;
+    } else {
+        return new SaveClass(key, value);
+    }
+}
+/* 惰性载入函数 主要处理浏览器差异多个if
+    一旦一次判断之后，修改该函数。避免重复判断if
+ */
+function LasyLoad() {
+    if (typeof XMLHttpRequest == 'undefined') {
+        LasyLoad = function () {
+            return new XMLHttpRequest();
+        };
+    } else if (typeof ActiveXObject != 'undefined') {
+        LasyLoad = function () {
+            if (typeof arguments.callee.activeXString != 'string') {
+                // ...
+            }
+        }
+    } else {
+        LasyLoad = function () {
+            throw new Error('No XHR object available.');
+        }
+    }
+}
+/* 函数绑定
+可以在特定的this环境中以指定参数调用另一个函数，该技巧常常和回调函数与事件处理程序一起使用，以便在将函数作为变量传递的同时保留代码执行环境。
+ */
+let handler = {
+    message: 'Event Handled',
+    handleClick: function (event) {
+        console.log(this.message);
+    }
+}
+// 需要创建闭包保存环境，这样会令代码难于理解和调试
+document.getElementById('myBtn').onclick = function (event) {
+    handler.handleClick(event);
+}
+
+// 所以实现了一个函数叫bind,bind() 创建了一个闭包，闭包使用apply()调用传入的函数，并给apply() 船体context对象和参数。注意这里使用的arguments对性爱那个是内部函数的，而非bind()的
+function bind(fn, context) {
+    return function () {
+        return fn.apply(context, arguments);
+    }
+}
+// 所以上述事件处理程序绑定可以改为
+document.getElementById('myBtn').onclick = bind(handler.handleClick, handler);
+
+/* 函数柯里化 */
+/* 防篡改对象*/
+let tamperProofObject = {
+    name: '防篡改对象！'
+}
+// 禁止给对象添加属性和方法
+Object.preventExtensions(tamperProofObject);
+// 密封 seal 不能删除属性和方法
+Object.seal(tamperProofObject);
+// 冻结 freeze  如果定义[[Set]] 函数，访问器属性仍然是可写的
+Object.freeze(tamperProofObject);
+
+/* 离线应用与客户端储存 */
+// 离线检测
+console.log(navigator.onLine ? '有网' : '断网');
+/* 应用缓存 appcache
+Appcache 就是从浏览器的缓存中分出来的一块缓存区。要想在这个缓存中保存数据，可以使用一个 描述文件(manifest file),列出要下载和缓存的资源 举例
+CACHE MANIFEST 
+#Comment
+file.js
+file.css
+要将描述文件与页面关联起来，可以在<html>中的manifest属性中指定这个文件的路径
+<html manifest ="offline.manifest"> MIME类型必须是 text/cache-manifest 文件拓展名现在推荐是 appcache
+虽然应用缓存的意图是确保离线时资源可用，但也相应的API让你知道它都在做什么。这个API的核心是applicationCache对象，这个对象有一个属性status常量，表示应用缓存的如下当前状态
+0 无缓存，1 限制，应用缓存未得到更新 2 检查中，正在下载描述文件并检查更新 3 下载中 4 更新完成 5 废弃
+事件: checking error noupdate  downloading progress updateready cached
+*/
+
+/* 数据存储
+cookie 当设定了一个cookie后，再给创建他的域名发送请求时，都会包含这个cookie。 这个限制确保了储存在cookie中的信息只能让批准的接受者访问，而无法被其他域访问
+cookie 的构成
+名称：不区分大小写
+值：必须经过URL编码
+域：cookie对于哪个域是有效的。所有向该域发送的请求中都会包含这个cookie信息。这个值可以包含子域 
+路径： 对于指定域中的那个路径，应该向服务器发送cookie
+失效时间： 表示cookie何时应该被删除的时间戳，默认是会话结束时即将所有cookie删除，不过也可以自己设置删除时间，GMT格式(Wdy,DD-Mon-YYYY HH:MM:SS GMT)
+安全标志：指定后，cookie只有在使用SSL连接的时候才发送到服务器
+  */
+var cookieUtil = {
+    get: function (name) {
+        let cookieName = encodeURIComponent(name) + '=',
+            cookieStart = document.cookie.indexOf(cookieName),
+            cookieValue = null;
+        if (cookieStart > -1) {
+            let cookieEnd = document.cookie.indexOf(';', cookieStart);
+            if (cookieEnd == -1) {
+                cookieEnd = document.cookie.length;
+            }
+            cookieValue = decodeURIComponent(document.cookie.substring(cookieStart + cookieName.length, cookieEnd));
+        }
+        return cookieValue;
+    },
+    set: function (name, value, expires, path, domain, secure) {
+        let cookieText = '';
+        if (name && value && name.length != 0 && name.length == value.length) {
+            for (let i = 0, len = name.length; i < len; i++) {
+                cookieText += (encodeURIComponent(name[i]) + '=' + decodeURIComponent(value[i]) + ';');
+            }
+            cookieText = cookieText.substring(0, cookieText.length - 1);
+            if (expires instanceof Date) {
+                cookieText += ';expires=' + expires.toGMTString();
+            }
+            if (path) {
+                cookieText += ';path=' + path;
+            }
+            if (domain) {
+                cookieText += ';domain=' + domain;
+            }
+            if (secure) {
+                cookieText += ';secure';
+            }
+            document.cookie = cookieText;
+            document.getElementById('message').textContent = 'cookie设置成功！';
+        } else {
+            throw new Error('Set Cookie Faild!Please check your arguments')
+        }
+    },
+    unset: function (name, path, domain, secure) {
+        this.set([''], [''], new Date(0), path, domain, secure);
+    }
+}
+/* Storage类型
+clear() getItem(name) key(index) removeItem(name) setItem(name, value) */
+/* IndexedDB
+Indexed DataBase API是在浏览器中保存结构化数据的一种数据库
+IndexedDB设计的操作完全是异步进行的。因此大多数操作会以请求方式进行，但这些操作会在后期执行。
+IndexedDB 最大的特色是使用对象保存数据，而不是用表来保存数据
+*/
+let database;
+
+function initDB() {
+    //浏览器都使用提供商前缀 所以获取indexedDB时需要下面那段代码
+    let indexedDB = window.indexedDB || window.msIndexedDB || window.mozIndexedDB || window.webkitIndexedDB;
+    // 打开数据库，如果不存在则会创建该数据库,默认是没有版本号的，最好一开始就为数据库指定一个版本号
+    let dbResult = indexedDB.open('test', 2);
+    dbResult.onerror = function (event) {
+        /* errorCode  UNKNOW_ERR(1) 意外错误
+                      NON_TRANSIENT_ERR
+                      NOT_FOUNT_ERR
+                      CONSTRAINT_ERR
+                      DATA_ERR
+                      NOT_ALLOWED_ERR
+                      TRANSACTION_INACTIVE_ERR
+                      ABORT_ERR
+                      READ_ONLY_ERR
+                      TIMEOUT_ERR
+                      QUOTA_ERR                   
+        */
+        throw new Error('something bad had happened while trying to open:' + event.target.errorCode);
+    }
+    dbResult.onsuccess = function (event) {
+        database = event.target.result;
+    }
+    dbResult.onupgradeneeded = function (event) {
+        database = event.target.result;
+        let users = [];
+        let responses = [];
+        for (let i = 0; i < 5; i++) {
+            let userTemp = {};
+            userTemp.name = `name${i}`;
+            userTemp.value = i;
+            users.push(userTemp);
+        }
+        let store = database.createObjectStore('users', {
+            keyPath: 'name'
+        });
+        for (let i = 0; i < users.length; i++) {
+            let res = store.add(users[i]);
+            res.onerror = function () {
+                throw new Error('something bad had happened while trying to open:' + event.target.errorCode);
+            };
+            res.onsuccess = function () {
+                console.log('成功添加user' + i);
+            };
+            responses.push(res);
+        }
+    }
+}
+// 事务以get举例 
+/* add() put() get() delete()  clear() */
+function getDataToDB(tableName, key) {
+    let IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;
+    // 第二个参数是事务类型 0只读，1读写 2 改变
+    let transaction = database.transaction(tableName, 'readonly');
+    let req = transaction.objectStore(tableName).get(key);
+    req.onerror = function (event) {
+        throw new Error('something bad had happened!');
+    }
+    req.onsuccess = function (event) {
+        console.log(event.target.result);
+    }
+    transaction.onerror = function () {
+        throw new Error('something bad had happened!');
+    }
+    transaction.oncomplete = function () {
+        // 整个事务都完成了
+        console.log('transaction completed!')
+    }
+}
+// 使用游标查询
+function userCursor(tableName) {
+    let IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;
+    // 第二个参数是事务类型 0只读，1读写 2 改变
+    let transaction = database.transaction(tableName, "readwrite");
+    let store = transaction.objectStore(tableName);
+    // 开启游标
+    let req = store.openCursor();
+    req.onsuccess = function (event) {
+        /* IDBCursor  direciton ：表示游标移动的方向，默认值是IDBCursor.NEXT(0) 表示下一项
+        IDBCursor.NEXT_NO_DUPLICATE(1)   PREV(2) PREV_NO_DUPLICATE
+        key 对象的键  value 实际的对象 primaryKey 游标使用的键 
+        可以调用update() delete() continue(key) advance(count)
+        */
+        let cursor = event.target.result;
+        let changeItem = cursor.value;
+        changeItem.value = 'new value';
+        let updateReq = cursor.update(changeItem);
+        updateReq.onsuccess = function (event) {
+            console.log('update success!');
+        }
+        updateReq.onerror = function (event) {
+            console.log('update faild!');
+        }
+        console.log(cursor);
+    }
+    req.onerror = function () {
+        throw new Error('something bad had happened!');
+    }
+}
