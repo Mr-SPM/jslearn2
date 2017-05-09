@@ -6,6 +6,19 @@
 </head>
 
 <body>
+    <table>
+        <tbody>
+            <tr ng-repeat-start="item in items">
+                <td>this is item {{$index + 1}}</td>
+            </tr>
+            <tr>
+                <td>The action is : {{item.action}}</td>
+            </tr>
+            <tr ng-repeat-end>
+                <td>Item {{$index +1}} is {{$item.complete ? '' : 'not'}} complete</td>
+            </tr>
+        </tbody>
+    </table>
 </body>
 
 </html>
