@@ -12,7 +12,7 @@
 或者  指定特定的HTML元素使用class
 div..test {font-size:18px;}
 ```
-2. background 简写属性数学怒
+2. background 简写属性数学
 ```
 background-color  
 background-image

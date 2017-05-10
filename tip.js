@@ -113,7 +113,7 @@ function counter() {
     return {
         count: function () {
             return n++;
-        }
+        },
         reset: function () {
             n = 0;
         }
