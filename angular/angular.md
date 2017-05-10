@@ -515,3 +515,6 @@ compile:function(element,attrs,transcludeFn){
     }
 }
 ```
+
+7.3 在指令中使用控制器
+> 指令能够创建出被其他指令所用的控制器。这允许指令被组合起来创建出更复杂的组建。
