@@ -19,6 +19,19 @@
             </tr>
         </tbody>
     </table>
+    <div ng-switch on="item.key">
+        <span ng-switch-when="one">one</span>
+        <span ng-switch-default>default</span>
+    </div>
+    <select ng-model='uiModel.selected' ng-options="item.value for item in items">
+        
+    </select>
+    <select ng-model='uiModel.selected' ng-options="item.key as item.value for item in items">
+        
+    </select>
+    <select ng-model='uiModel.selected' ng-options="item.value group by item.type for item in items">
+        
+    </select>
 </body>
 
 </html>

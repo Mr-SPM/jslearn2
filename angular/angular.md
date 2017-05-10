@@ -182,4 +182,151 @@ angular.module('mainApp',['myApp']);
 ```
 
 2.4.3 使用局部视图工作 ng-include
-> 该指令从服务器获取一段HTML片段，编译并处理其中包含的任何指令，并添加到DOM中去，这些片段被称为局部视图
+> 该指令从服务器获取一段HTML片段，编译并处理其中包含的任何指令，并添加到DOM中去，这些片段被称为局部视图  
+ng-include 作为自定义元素使用时具备3个配置参数  
+1.src  src='xxx.html' 注意使用单引号静态的定义一个文件，如果是"xxx",这样的话字符串会被当作JavaScript表达式进行计算，src设置可以通过计算得到  
+2.onload  指定一个在内容被加载时调用计算的表达式  
+3.autoscroll  指定在内容被加载时AngularJS是否应该滚动到这部分视图所在的区域  
+**ng-include 也可作为属性使用**  
+
+2.4.5 有条件地交换元素 ng-switch
+```html
+<div ng-switch on="item.key">
+    <span ng-switch-when="one">one</span>
+    <span ng-switch-default>default</span>
+</div>
+```
+
+2.4.6 隐藏未处理的内联模版绑定表达式 ng-cloak 
+> 解决方式：1. 坚持使用ng-bind  2.使用ng-cloak
+
+## 使用元素与事件指令
+2.5 使用元素指令
+* ng-if  从DOM中添加或移除元素
+* ng-class (ng-class-even/ng-class-odd)  
+```html
+<div ng-class = "{'className': true/false }"
+```
+* ng-hide/ng-show 在DOM中显示或隐藏元素
+* ng-style 设置一个或多个CSS属性 
+```html 
+<div ng-style ="{'background-color':item.color}"></div>
+```
+
+2.6 处理事件
+* ng-blur
+* ng-change
+* ng-click
+* ng-copy/ng-cut/ng-paste
+* ng-dbclick
+* ng-focus
+* ng-keydown/ng-keypress/ng-keyup
+* ng-mousedown/mouseenter/mouseleave/mousemove/mouseover/mouseup
+* ng-submit 
+#### 创建自定义事件指令
+```js
+myApp.directive('myEventDirective',function(){
+    return function(scope,element,attrs){
+        // element是一个jqLite对象，下面的操作是使用jquery同名的on方法注册了touch事件处理函数
+        element.on('touchstart touchend',function(){
+            console.log('I have been touched !');
+        })
+    }
+})
+```
+
+2.7 管理特殊属性  
+2.7.1 管理布尔属性
+> 例如 disabled 只要存在，不管属性有没有值，就可产生效果  
+对此angular内置了一些布尔属性指令 1.ng-checked 2.ng-disabled 3. ng-open 4. ng-readonly 5. ng-selected  
+
+2.7.2 管理特殊属性 
+>ng-href    ng-src  
+ng-srcset 在img上设置srcset属性，允许为显示不同大小和像素密度而指定多个图片，浏览器的支持很有限
+
+# 三、使用表单
+3.1 数据双向绑定 ng-model
+> 除了显式的在作用域中设置属性，也可隐式地创建在html中使用ng-model绑定属性，当表单元素值改变时，该属性才会被创建。 （并不提倡这种方法）  
+**angular.isDefined()** 可以检查属性是否被创建
+
+3.2 校验表单
+> 要想获得AngularJS的最佳校验效果，必须为表单元素设置一些属性，name属性，通过name属性的值可以访问变量值  
+禁用浏览器所支持的校验并启用angular校验功能，需要在表单元素上增*novalidate* 属性
+#### 表单指令所定义的校验变量和 如果符合则会加到的这个类
+$pristine   ng-pristine 没有与元素/表单产生交互，返回true
+$dirty  ng-dirty 产生过交互
+$valid  ng-valid 校验通过
+$invalid    ng-invalid 校验无效
+$error  提供校验错误的详情信息
+
+3.3 使用表单指令属性
+#### input
+* ng-model/ng-change/ng-minlength/ng-maxlength/ng-required
+* ng-pattern 设置一个表达式，元素内容必须匹配该正则表达式
+#### 复选框checkbox
+* ng-model/ng-change
+* ng-true-value / ng-false-value  指定当元素被勾选或取消勾选时所绑定的表达式的值
+#### 文本区textarea
+* 与input类似
+#### 选择列表select
+```html
+    <!--标签 for 项目 in 数组-->
+    <select ng-model='uiModel.selected' ng-options="item.value for item in items"> 
+        <option value="">默认选项</options>
+    </select>
+    <!--所选属性 as 标签 for 项目 in 数组-->
+    <select ng-model='uiModel.selected' ng-options="item.key as item.value for item in items">  
+    </select>
+    <!--创建选项组-->
+    <select ng-model='uiModel.selected' ng-options="item.value group by item.type for item in items">  
+    </select>
+```
+
+# 四、使用控制器和作用域
+>控制器是通过AngularJs的Module对象所提供的controller方法创建出来的。controller方法的参数是新建控制器的名字和一个将被用于创建控制器的函数。这个函数应被理解为构造器，但是更愿意称其为工厂函数，因为创建AngularJS组建所需的许多方法调用通常都被表示为使用一个函数（工厂函数）创建另外一个函数（工人函数）  
+工厂函数能够使用依赖注入特性来声明对AngularJS服务的依赖。
+```js
+// 定义一个简单的控制器
+myApp.controller('myController',function($scope){
+    $scope.value = '定义作用域属性';
+    $scope.way = function(){
+        console.log('定义作用域方法');
+    }
+    $scope.broadcast =function(){
+        $scope.$emit('tellFather',[{key:'告诉爸爸'}]);
+        $scope.$broadcast('tellChildren',[{key:'告诉儿子们'}]);
+    }
+    // 一个事件监听
+    $scope.$on('FireEvent',function(event,args){
+        console.log('监测到了FireEvent！');
+    })
+});
+```
+```html
+<div ng-controller = "myController">视图1</div>
+<!--控制器复用-->
+<div ng-controller = "myController">视图2</div>
+```
+4.1 作用域之间的通信
+![通信图](images/4_1.png)
+* $broadcast(name,args) 向当前作用域下的所有子作用域发送一个事件。
+* $emit(name,args) 向当前作用域的父作用域发送一个事件，直至跟作用域
+* $on(name,handler) 注册一个事件处理函数，在函数在特定的事件被当前作用域收到时将会被调用
+
+4.2 使用服务调解作用域事件
+> AngularJS中的习惯是使用服务来调解作用域之间的通信
+```js
+myApp.service('broadcastService',function($rootScope){
+    this.setMessage:function(message){
+        $rootScope.$broadcast('messageEvent',message);
+    }
+})
+```
+
+4.3 使用控制器继承
+4.4 使用多控制器 **对应用中的每一个主要视图都创建一个新的控制器**
+
+## 显示的更新作用域
+* $apply(expression)    向作用域应用变化
+* $watch(expression,handler)    注册一个处理函数，当expression表达式所引用的值变化时，触发handler    
+* $watchCollection(object,handler)  当指定的object对象的任一属性变化时，触发handler
