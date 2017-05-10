@@ -407,14 +407,111 @@ myApp.directive('myDirective',function(){
 })
 ```
 6.2 定义复杂指令
+> 定义复杂指令，工厂函数必须返回一个对象，可以用于下列属性
 * compile 指定一个编译函数
 * controller 为指令创建一个控制器函数
 * link  为指令制定一个链接函数
 * replace 指定模版内容是否替换指令所应用到的元素
-* require 声明对某个控制器的以来
+* require 声明对某个控制器的依赖
 * restrict 指定指令如何被使用
 * scope 为指令创建一个新的作用域或者一个隔离的作用域
 * template 指定一个将被插入到HTML文档的模版
 * templateUrl 指定一个将被插入到HTML文档的外部模版
 * transclude 指定指令是否被用于包含任意内容
-6.2.1 从作用域获取数据
+> 严格的来说，compile编译函数只用来修改DOM,link链接函数来执行比如创建监听器和设置事件处理程序等任务。编译/链接分离有助于改善特别复杂或者处理大量数据的指令的性能，一般性编译函数只用来创建类似于ng-repeat指令这样的功能
+```js
+myApp.directive('myDirective',function(){
+    return {
+        // E 元素 M 注释 C 类  A 属性  A最为常见，也具备良好的兼容性
+        restrict:'EMCA',
+        // 使用指令模版
+        template:'<div>hello {{name}}!</div>',
+        /* 使用函数作为模版 不要使用模版函数特性来生成需要以编程方式生成的内容，使用链接函数来代替。
+        template:function(element,attrs){
+            return angular.element(document.querySelector('#listTemplate')).html();
+        }*/
+        /* 使用外部模版
+        templateUrl:'./index.html',
+        使用函数来加载外部模版
+        templateUrl:function(element,attrs){
+            if(true) {
+                return './index.html';
+            }else {
+                return './template.html';
+            }
+        }*/
+        // 替换元素 true 模版则会替换元素并且将元素中的属性也转移给了模版内容，否则是插入到元素内部
+        replace:true,
+        // 管理指令的作用域，给每个指令实例创建自己的作用域 scope 定义对象属性为true
+        scope:{
+
+        }
+    }
+})
+```
+###　scope 属性 
+> 管理指令的作用域：默认情况下，链接函数被传入了控制器的作用域，而该控制器管理着视图包含了指令所应用到的元素。  
+ scope 定义对象属性为true，为指令的每个实例创建一个独立的作用域，这种方法的优点是简单而且与AngularJS其他部分相一致，但是**缺点是指令的行为要受到所使用到的控制器的支配，因为对于作用域继承的默认规则总是奏效的**这样就可以会导致一种情况，a控制器有一个属性count的值为3，b控制器也有一个属性count值为'abc'，指令可能根本不想继承某个值，而且如果修改发生定义与作用域对象上的属性的话，可能会以意想不到的方式结束对控制器作用的修改，**这种事情很容易在该指令被其他开发者所使用时导致问题**  
+ **创建一个隔离的作用域**  当scope属性被设置为一个对象时，可创建一个隔离的作用域，该作用域不继承自控制器的作用域。 -->但是这种情况下，指令会被完全隔绝，会导致指令难以输入和输出数据。这时候就要用到下面那个方案  
+ 
+ 6.3 通过属性值进行绑定
+> 隔绝的作用域允许使用应用于指令旁边的元素上的属性将数据值绑定到控制器作用域上。  
+在隔离作用域上的**单向绑定**总是被计算做字符串值,如果需要访问一个数组等引用类型数据就必须使用双向绑定，即时你不打算修改它。  
+**双向绑定** 将字符‘@’改为‘=’，并且必须绑定控制器属性，已确定哪个属性需要被更新
+**计算表达式（方法）** 使用字符‘&’绑定，将指定特性的值绑定到一个函数。下面的例子是将callback属性绑定到控制器的一个名为confirm方法上。
+**使用隔离作用域来计算一个表达式** 采用方式如下面的caculate,其中的**value 必须是在控制器上没有被定义过的属性名,否则来自隔离作用域的数据将被忽略**，这样的话，这个value就可以传递来自隔离作用域的数据
+```html
+<!--单向绑定myData,simpleData,属性在元素上大写需要转为 '-小写形式'-->
+<div my-directive my-data ="{{uiModel.datafordirective}}" simple-data ="simple" special-data ="uiModel.special" callback="confirm" caculate='sum(value)'>
+</div>
+```
+```js
+scope:{
+    // @后面加字符串，意识是从根据字符串名从元素上寻找对应属性值,所以上面的HTML例子的my-data需改为'othername'从而进行绑定
+    myData:'@othername',
+    simpleData:'@',
+    specialData:'=',
+    callback:'&',
+    caculate:'&'
+}
+```
+
+# 七、高级指令特性
+7.1 使用嵌入包含 ng-transclude
+> 术语“嵌入包含”的意思是将一个文档的一部分通过引用插入到另一个文档中。  
+被嵌入包含的内容中的表达式是在控制器作用域中被计算的，而不是指令的作用域。*如果计算潜入包含的表达式时你确实想将指令作用域考虑在内，只需确保将scope设置为false*  
+1.在创建指令时将transclude定义属性设置为true,设置后，会对指令所有应用到的元素内容进行包装，但并不是元素本身。如果想包含进元素，就需要将transclude属性设置为“element”  
+2.将ng-transclude 指令使用到模版中，放在想插入被包装元素的地方
+```html
+<div class="entirebody">
+    <div class="body1">body1</div>
+    <div class="transbody" ng-transclude>
+        被包装的区域
+    </div>
+</div>
+```
+
+7.2 使用编译函数 compile
+> 使用编译函数的好处，除了性能之外，可以使用嵌入包含来重复生成内容的能力，就像ng-repeat所做的那样  
+编译函数具有3个参数：指令所应用到的元素，该元素的属性，**以及一个可用于创建嵌入包含元素的拷贝的函数**
+**编译函数应当仅仅是操作DOM的，所以并没有为他提供作用域**
+```js
+compile:function(element,attrs,transcludeFn){
+    // 返回一个链接函数
+    return function($scope,$element,$attr) {
+        // 创建一个data.length的监听器，在监听器函数里使用了jqLite来定为指令所应用到的元素的氟元素，并移除其子元素，必须使用父元素，因为设置了transclde属性为element,意味着想要添加和删除指令元素的拷贝，下一步遍历数据对象，通过调用$scope.$new()创建新的作用域。对于嵌入包含内容的每一个实例，这允许我将一个不同的对象赋值给item属性。
+       $scope.$watch('data.length'){
+        var parent = $element.parent();
+        parent.children().remove();
+        for(var i=0;i<$scope.data.length;i++){
+            var childScope=$scope.$new();
+            childScope[$scope.propName]=$scope.data[i];
+            // 第一个参数是包含item属性的子作用域，item属性设置为当前数据线，第二个参数是一个传入包含内容的一组拷贝的函数，这份拷贝被使用jqLite添加到父元素下。结果是对于每个数据对象生成了指令所应用到的tr元素的一份拷贝（及其内容），并且创建了一个新的作用域。
+            transcludeFn(childScope,function(clone){
+                parent.append(clone);
+            })
+        }
+       }
+    }
+}
+```
