@@ -32,6 +32,7 @@
     <select ng-model='uiModel.selected' ng-options="item.value group by item.type for item in items">
         
     </select>
+    <li ng-repeat="item in items | limitTo:5/limitVal">item.value</li>
 </body>
 
 </html>

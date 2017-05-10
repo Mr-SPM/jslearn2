@@ -3,7 +3,7 @@ Object.getOwnPropertyNames(Math)
 // 原始类型添加属性
 var str = 'test';
 str.temp = 't';
-vat t = str.temp; // t undefind, str.temp = undefind
+var t = str.temp; // t undefind, str.temp = undefind
 var num1 = 1;
 var num2 = new Number(1);
 num1 == num2 //true

@@ -330,3 +330,91 @@ myApp.service('broadcastService',function($rootScope){
 * $apply(expression)    向作用域应用变化
 * $watch(expression,handler)    注册一个处理函数，当expression表达式所引用的值变化时，触发handler    
 * $watchCollection(object,handler)  当指定的object对象的任一属性变化时，触发handler
+
+
+# 五、使用过滤器
+5.1 内置过滤器
+5.1.1 过滤单个数据的值
+* currency 后面添加了一个冒号，然后添加一个字符串表示想替换成的符号
+```html
+{{price | currency:"￥"}}
+```
+* date
+```html
+{{now | date:'yyyy/MM/dd HH:mm:ss'}}
+```
+* json
+* number number过滤器会自动在千分位处插入逗号
+```html
+{{price | number:2}}
+```
+* uppercase/lowercase
+
+5.1.2 过滤集合
+* limitTo 限制项目数量 冒号后面可以是固定值也可以是scope属性,如果值是负数，则会从数组倒序取值，不必担心数组越界
+```html
+    <li ng-repeat="item in items | limitTo:5/limitVal">item.value</li>
+```
+* filter 选取项，用于从数组中选取一些对象，选取条件可以指定为一个表达式，或者一个用于匹配属性值的map对象，或者一个函数。
+```html
+    <li ng-repeat="item in items | filter:{key:'type'}">item.value</li>
+```
+* orderBy 对项目排序。 + - 对应正序倒序
+```html
+    <li ng-repeat="item in items | orderBy:'-value'">item.value</li>
+```
+```js
+ // 函数排序
+ $scope.myOrderBy = function(item){
+     // item.xx小于5的会默认排在最前端
+     return item.xx < 5 ? 0: item.price;
+ }
+```
+
+5.1.3 链式过滤器
+```html
+<li ng-repeat="item in items | orderBy:'-value' | limitTo: 5">item.value</li>
+```
+
+**5.2 创建自定义过滤器**
+> 过滤器是由Module.filter方法创建的，该方法接收2个参数：待创建的过滤器名称和一个工厂函数，用于创建执行实际工作的工人函数。
+```js 
+myApp.filter('myFilter',function(){
+    return function(value){
+        return '过滤：' +value ;
+    }
+})
+```
+5.2.1 创建过滤器集合
+```js
+myApp.filter(...)
+.filter(...)
+```
+**5.3 $filter**
+```js
+var myfilter = $filter('filterName');
+myfilter(data,args...);
+```
+
+# 六、创建自定义指令
+6.1 定义指令
+> 使用Module.directive来创建指令，参数是新指令的名称和一个用于创建指令的工厂函数
+```js
+myApp.directive('myDirective',function(){
+    return function(scope,element,attrs){
+        // ...
+    }
+})
+```
+6.2 定义复杂指令
+* compile 指定一个编译函数
+* controller 为指令创建一个控制器函数
+* link  为指令制定一个链接函数
+* replace 指定模版内容是否替换指令所应用到的元素
+* require 声明对某个控制器的以来
+* restrict 指定指令如何被使用
+* scope 为指令创建一个新的作用域或者一个隔离的作用域
+* template 指定一个将被插入到HTML文档的模版
+* templateUrl 指定一个将被插入到HTML文档的外部模版
+* transclude 指定指令是否被用于包含任意内容
+6.2.1 从作用域获取数据
