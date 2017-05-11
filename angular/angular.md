@@ -517,4 +517,43 @@ compile:function(element,attrs,transcludeFn){
 ```
 
 7.3 在指令中使用控制器
-> 指令能够创建出被其他指令所用的控制器。这允许指令被组合起来创建出更复杂的组建。
+> 指令能够创建出被其他指令所用的控制器。这允许指令被组合起来创建出更复杂的组建。  
+controller 定义的对象用于指令创建一个控制器，这个函数可以声明对作用域（即$scope）的依赖，对指令所应用到的元素（$element）的依赖，和对该元素属性（$attrs）的依赖。  
+**require**定义对象属性用于声明对控制器的依赖。属性值是一个可选前缀和指令名（None 假定2个指令应用与同一个元素   ^在指令所应用到的元素的父元素上查找另一个指令 ？如果找不到指令也不会报错，慎用）  
+使用控制器中定义的功能，需要在链接函数上多加一个参数
+```js
+// ctrl拥有自己的作用域$scope
+require:'^fatherDirective',
+link:function(scope,element,attrs,ctrl)
+```
+7.3.1 添加另外一个指令
+> 定义控制器函数的价值在与对功能的分离和重用。这种方法允许你混合搭配各种指令的功能，从而在程序中创建出各种功能不同的组合。
+
+7.4 创建自定义表单元素
+7.4.1 处理外部变化
+### NgModel控制器提供的基本方法与属性
+* $render() 当数据绑定的值发生变化时NgModel控制器调用更新UI的函数
+* $setViewValue(value) 更新数据绑定的值
+* $viewValue 返回应当被指令显示的格式化后的值
+* $modelValue 从作用域返回未格式化的值
+* $formatters 将$modelValue 转成 viewValue的格式化函数构成的数组
+
+7.4.2 处理内部变化
+```js
+link:function(scope,element,attrs,ctrl){
+    element.on('click',function(event){
+        scope.$apply(function(){
+            ctrl.$setViewValue(event.target.innerText);
+        });
+    })
+}
+```
+
+7.4.2 格式化数据值
+```js
+ctrl.$formatters.push(function(value){
+    return ...
+})
+```
+
+7.4.3 校验自定义表单元素 p450 不多作赘述
