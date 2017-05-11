@@ -557,3 +557,20 @@ ctrl.$formatters.push(function(value){
 ```
 
 7.4.3 校验自定义表单元素 p450 不多作赘述
+
+
+# 八、 AngularJS 服务
+8.1 创建和使用服务
+8.1.1 fatory
+> 下面例子是创建一个log服务，通过工厂函数返回的对象是服务对象，且每当logService被请求，都将被AngularJS使用。工厂函数仅被调用一次，因为该对象创建和返回时使用的服务在应用程序中是必不可少的。**当心重复使用服务名称，如果这么做，已存在的服务将被覆盖，所以内置服务以$开始**，服务是单例模式，所有模块使用该服务的都共用同一个服务。  
+```js
+myApp.factory('logService',function(){
+    var messageCount = 0;
+    return {
+        log: function(msg) {
+            console.log('Log'+ messageCount++ +msg);
+        }
+    }
+})
+
+```
