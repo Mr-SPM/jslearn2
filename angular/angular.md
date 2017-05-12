@@ -856,4 +856,78 @@ AngularJS提供了**$q**服务来获取和管理承诺。下面列出$q服务定
 
 # REST服务  不多做介绍，21章
 
+# 九、视图服务
+9.1 使用URL路由
+
+9.1.1 安装和使用ngRoute模块
+> 由$route服务提供的核心功能是设置URL与视图文件名称之间的映射，被称为URL路由或路由。当$location.path 方法返回的值匹配映射其中之一时，与之相对应的视图文件就被载入并显示。**使用$route服务的提供器$routeProvider定义映射**
+
+9.2 显示选择的视图
+> ngRoute模块包括指令ng-view,它显示路由所指定的视图文件的内容，该路由匹配由$location服务返回的当前URL路径。
+
+9.3 使用路由参数
+9.3。1 配置路由
+* controller
+* controllerAs 控制器别名 
+* template
+* templateUrl
+* resolve
+* redirectTo
+* reloadOnSearch 默认为ture,仅当$location的search和hash方法改变返回值时，路由重载
+* caseInsensitiveMatch 默认为True,表示对大小写不敏感
+```js
+// 该路由会匹配像 pathName/123 这样的路径，并且会将123赋值给路由参数调用的id
+// 贪婪路由参数有冒号后面跟着名称后面再跟着星号表示。
+$routerProvider.when('/pathName/:id',{
+    templateUrl:'editorView.html'
+})
+```
+9.3.2 向路由添加依赖 resolve配置属性允许你指定将被注入controller属性指定的控制器的依赖。那些依赖可以是服务，但resolve属性更多用于初始化视图所必须执行的工作。这是因为你可以将承诺对象作为依赖返回，然后路由不实现控制器，直到他们被解决。
+```js
+myApp.factory('permissionService', function ($q) {
+    return {
+        getPermission: function (hasPermission) {
+            var d = $q.defer();
+            if (hasPermission) {
+                d.resolve(true);
+            } else {
+                d.reject('error');
+            }
+            return d.promise();
+        }
+    }
+}).config(function ($routeProvider, permissionServiceProvider) {
+    $routeProvider.when('/edit/:id', {
+        templateUrl: '/editArea.html',
+        controller: 'myController',
+        controllerAs: 'fakeControllerName',
+        resolve: {
+            permission: permissionServiceProvider.getPermission(true)
+        }
+    })
+})
+```
+
+9.4 访问路由和路由参数
+9.4.1 响应路由变化
+* current 返回提供当前路由信息的对象
+* reload() 重载视图
+* routes 返回通过$routeProvider定义的路由集合
+> 绝大多数$route服务不可用。通常你需要了解2件事，路由何时改变（$routeChangeSuccess），新路径是什么($location)
+* $routeChangeStart
+* $routeChangeSuccess
+* $routeUpdate
+* $routeChangeError
+
+9.4.2 获取路由参数
+```js
+$scope.$on("$routeChangeSuccess",function(){
+    console.log($routeParams['id']);
+})
+```
+
+
+
+
+
 

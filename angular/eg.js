@@ -71,3 +71,29 @@ $httpProvider.interceptors.push(function () {
         }
     }
 })
+$routerProvider.when('/pathName', {
+    templateUrl: 'editorView.html'
+})
+
+myApp.factory('permissionService', function ($q) {
+    return {
+        getPermission: function (hasPermission) {
+            var d = $q.defer();
+            if (hasPermission) {
+                d.resolve(true);
+            } else {
+                d.reject('error');
+            }
+            return d.promise();
+        }
+    }
+}).config(function ($routeProvider, permissionServiceProvider) {
+    $routeProvider.when('/edit/:id', {
+        templateUrl: '/editArea.html',
+        controller: 'myController',
+        controllerAs: 'fakeControllerName',
+        resolve: {
+            permission: permissionServiceProvider.getPermission(true)
+        }
+    })
+})
