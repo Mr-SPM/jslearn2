@@ -561,6 +561,7 @@ ctrl.$formatters.push(function(value){
 
 # 八、 AngularJS 服务
 8.1 创建和使用服务
+> 服务的目的是构建通用功能而无需打破MVC模式
 8.1.1 fatory
 > 下面例子是创建一个log服务，通过工厂函数返回的对象是服务对象，且每当logService被请求，都将被AngularJS使用。工厂函数仅被调用一次，因为该对象创建和返回时使用的服务在应用程序中是必不可少的。**当心重复使用服务名称，如果这么做，已存在的服务将被覆盖，所以内置服务以$开始**，服务是单例模式，所有模块使用该服务的都共用同一个服务。  
 ```js
@@ -574,3 +575,285 @@ myApp.factory('logService',function(){
 })
 
 ```
+```js
+// 使用上面的服务
+angular.module('exampleApp',['myApp']).controller('myController',function($scope,logService){
+  logService.log('使用服务');  
+});
+```
+
+8.1.2 service 
+> service 第二个参数等于一个构造函数。但并不建议在使用原型
+```js
+myApp.service('myService',function(){
+    var messageCount = 0;
+    this.log = function(msg){
+        console.log('Log'+ messageCount++ +msg);
+    }
+})
+```
+
+8.1.3 provider
+> provider方法可以让你更好地控制被创建的或被配置的服务对象的方式。provider工厂函数必须返回提供器对象，并在其中定义$get方法，用来返回服务对象。  
+需要该服务时，AngularJS将调用factory方法获得提供器对象，然后调用$get方法获得服务对象。使用providerr方法并没有改变服务使用方式。  
+使用provider方法的优点是你可以为provider方法添加功能，该方法可以用于配置服务对象  
+**AngularJS使提供器对象适用于依赖注入，使用服务的名称与Provider连接，提供器对象都可以借由声明对logServiceProvider的依赖获得，当AngularJS在应用程序载入所有模块时，它将被执行。然后可以使用config方法进行配置，下面举例**
+```js
+myApp.provider('logService', function () {
+    var counter = true;
+    var debug = true;
+    return {
+        messageCounterEnabled: function (setting) {
+            if (angular.isDefined(setting)) {
+                counter = setting;
+                return this;
+            } else {
+                return counter;
+            }
+        },
+        debugEnabled: function (setting) {
+            if (angular.isDefined(setting)) {
+                debug = setting;
+                return this;
+            } else {
+                return debug;
+            }
+        },
+        $get: function () {
+            return {
+                messageCount: 0,
+                log: function (msg) {
+                    if (debug) {
+                        console.log('Log' + messageCount++ + msg);
+                    }
+                }
+            }
+        }
+    }
+})
+angular.module('exampleApp', ['myApp']).config(function (logServiceProvider) {
+    logServiceProvider.debugEnabled(true).messageCounterEnabled(false);
+}).controller(
+    'exampleController', function ($scope, logService) {
+        logService.log('providerSetting');
+    });
+```
+
+8.2 使用内置模块和服务
+
+* $animate 使转换内容动画化
+
+* $controller 封装$injector服务封装的实例化控制器
+
+* $filter 提供过滤器入口
+* $http 创建并管理Ajax请求
+* $injector 创建AngularJS组建实例
+
+
+* $provider 实现许多由Module暴露的方法
+* $q 提供deferred对象/promises
+* $resourse 提供对RESTfulAPI运作的支持
+* $rootElement 在DOM中提供跟元素的入口
+* $rootScope 提供顶级作用域的入口
+* $route 为基于浏览器URL路径的视图内容改变提供支持
+* $routeParams 提供关于URL路由的信息
+* $swipe 识别单击手势
+
+
+8.2.1 针对全局对象、错误和表达式的服务
+> AngularJS包含这些服务的主因是使测试更简单。
+* $anchorScroll 滚动浏览器窗口至指定的锚点  
+    > $anchorScroll服务滚动浏览器窗口到显示id与$location.hash方法返回值一致的元素处。  
+    在Module.config方法中，$anchorScrollProvider上的disableAutoScrolling方法，可以禁用自动滚动。
+* $document 提供jqLite对象，包括DOM window.document对象
+* $location 提供围绕浏览器location对象的封装
+    > $location 服务定义了2个事件，当URL改变时或者由于用户交互编程的方式改变，你可以使用他们接受通知。  $locationChangeStart(*可以在Event对象中调用preventDefault方法来阻止*) $locationChangeSuccess 
+* $log 提供围绕全局console对象的封装
+* $timeout/$interval  提供围绕window.setTimeout/window.setInterval函数的增强封装
+    > 1.服务使用的参数 fn 定时执行的函数 delay fn被执行前的毫秒数 count 定时/执行循环将重复的次数($interval) InvokeApply 当设置为默认值true时。fn将与$scope.$apply 方法一同执行
+* $window 提供DOM window对象的引用
+
+8.2.2 异常处理
+* $exceptionHandler 处理应用程序中的异常。
+    > 其默认实现是调用$log服务定义的error方法。他仅捕获未处理的一场。*通过try..catch块来处理的异常不会被处理。*
+
+8.2.3 处理危险数据 
+> AngularJS使用叫做严格上下文转义（strict contextual escaping SCE）的特性，预防不安全的值通过数据绑定被展现出来。该特性是默认起作用的。
+* $sanitize 将危险的HTML字符替换为与之相等的安全显示符
+* $sce 为了使他们安全的显示，从HTML字符串中删除掉危险的元素和属性
+    > **使用不安全绑定**  
+     ng-bind-html指令，它允许指定某个数据的值是可信的，并应该不被转义的呈现出来，**ng-bind-html指令依赖于ngSanitize模块，主AngularJS库并没有包括它，需要去下载**
+```js
+     angular.module('myApp',['ngSanitize']).controller('myController',function($scope){
+            $scope.htmlData = '<p>This is <b onmouseover=alert("Attack!")>dangeraous</b> data </p>'; 
+            // 可明确地净化内容
+            $scope.$watch('dangerousData',function(newValue){
+                $scope.htmlData = $sanitize(newValue);
+            })
+        })
+```
+```html
+    <input type="text" ng-model="dangerousData"/>
+    <p ng-bind-html="htmlData"></p>
+    <p ng-bind="htmlData"></p>
+```
+   > **明确信任的数据** 在极其少数的情况下，你可能需要显示没有转义或净化的潜在危险内容，可以使用$sce服务声明内容是可信的。*基本用不着，也不建议用，除非是强制需求*
+   ```js
+   trustData = $sce.trustAsHtml(value)
+   ```
+
+8.2.4 使用AngularJS表达式和指令
+* $compile 处理一个HTML以创建可被用于生成内容的函数
+   > 编译内容，$compile服务可以将创建可利用作用域生成内容的函数。不支持指令。
+```js
+// 定义HTML片段，并用jqLite对象包裹
+var content = "<ul><li ng-repeat='city in citys'>{{city}}</li></ul>";
+var listElment = angular.element(content);
+// 使用$compile服务对象这个函数创建将被用于生成内容的函数
+var compileFn = $compile(listElment);
+// 调用函数处理片段中的内容。片段中的表达式和指令将被执行。编译函数是没有返回值的。
+compileFn(scope);
+// 将编译后的内容添加到element 
+element.append(listElment);
+```
+* $interpolate 处理字符串，包括绑定表达式创建可被用于生成内容的函数
+   > $interrpolate 比 $parse 更加灵活，因为它能和包含表达式的字符串一起工作，而不仅仅是表达式自身。
+    **配置内插 $interpolateProvider 提供 startSymbol(符号)/endSymbol(符号)**
+```js
+var interpolateFn = $interpolate('The total is {{amount | currrency}}(including tax)')    
+```
+* $parse 处理表达式并创建可被用于生成内容的函数
+   > $parse服务传入AngularJS表达式，并转换它为函数， 你可以使用该函数求得使用作用域对象的表达式的值。在自定义指令中这是可用的。常见的使用范围是在应用程序中为了他用户所提供的数值而定义表达式。  
+```js
+    var expressionFn = $parse(scope.expr);
+    var result = exppersionFn (scope)
+```
+
+
+# Ajax和Promises服务
+
+8.3 Ajax
+8.3.1 产生Ajax请求 $http服务的方法
+* **get(url,config)**
+ * **post(url,data,config)**
+* delete(url,config)
+* put(url,data,congig)
+* head(url,config)
+* jsonp(url,config) *执行GET请求获取JavaScript代码然后执行该代码*
+* 另一个产生Ajax请求的方法是将$http服务对象当作函数并传入配置对象。当你需要某个HTTP方法时这是可行的，但这并不是个快捷的可用发放。
+
+8.3.2 接收Ajax响应 下列是由$http服务方法返回的承诺对象promises所定义的方法
+* success(fn)
+* error(fn)
+* then(successFn,errorFn)
+    >then 方法传入的对象属性
+    * data 返回数据是JSON数据的话，AngularJS会自动处理
+    * status HTTP状态码
+    * headers(name) 可被用于获取名为头部的函数
+    * config 产生请求的配置对象
+```js
+$http.get(url,config).then(function(response){
+    console.log("Status: "+response.status);
+    console.log("Type: "+response.headers('content-type'));
+    console.log("Length: "+response.headers('content-length'));
+    $scope.data = response.data;
+})    
+```
+
+8.3.3 配置Ajax请求
+* data 如果你设置了该对象，AngularJS会自动序列化为JSON格式
+* headers 请求头部
+* method 
+* params URL属性，设置为想要包含的属性相一致的名称和值的对象
+* timeout 指定请求过期前的毫秒数
+* transformRequest/transformResponse  转换 请求/响应
+* url
+* withCredentials 
+* xsrfHeaderNamexsrfCookieName 这些属性是用来应对跨站点请求伪造可被服务器查询的许可证的
+> AngularJS定义了2个内置转换，传出的数据序列化成JSON，传入的JSON解析成JavaScript对象
+
+8.3.3.1 转换响应
+```js
+config: {
+    // 将XML转换为对象例子
+    transformResponse: function(data, headers) {
+        if (headers('content-type') == 'application/xml' && angular.isString(data)) {
+            var products = [];
+            var productElems = angular.element(data.trim()).find('product');
+            for (var i = 0; i < productElems.length; i++) {
+                products.push({
+                    name: product.attr('name')
+                })
+            }
+            return products;
+        } else {
+            return data;
+        }
+    }
+}
+```
+8.3.3.2 转换响应
+```js
+config: {
+    transformRequest: function(data, headers) {
+        var rootElem = angular.element('<xml>');
+        for (var i = 0; i < data.length; i++) {
+            var prodElem = angular.element('<product>');
+            prodElem.attr('name', data[i].name);
+            rootElem.append(prodElem);
+        }
+        rootElem.children().wrap('<product>');
+        return rootElem.html();
+    }
+}
+```
+
+8.4 **设置默认的Ajax**
+> 使用$http服务提供器$httpProvider为Ajax请求定义默认设置,defaults对象上的众多被定义的属性也可以通过$http.defaults属性访问，它通过服务器允许全局Ajax配置改变
+   * defaults.headers.common 定义用于所有请求的默认头部
+   * defaults.headers.post
+   * defaults.headers.put
+   * defaults.transformResponse
+   * defaults.transformRequest
+   * **interceptors** 拦截器工厂函数的数组
+   * withCredentials 
+## 使用Ajax拦截器
+> $httpProvider.interceptor 属性是个数组，其中插入了工厂函数，返回的带有下列属性的对每个属性对应于不同类型的拦截器，并且函数被赋给有可能改变请求或响应的属性。
+* request 在产生请求并传入配置对象前调用
+* requestError
+* response 在响应被接收并传入响应对象时调用
+* responseError
+```js
+$httpProvider.interceptors.push(function () {
+    return {
+        request: function (config) {
+            config.url = 'productData.json';
+            return config;
+        },
+        response: function (response) {
+            console.log('Data Count: ' + repsonse.data.length);
+            return response;
+        }
+    }
+})
+```
+
+## 使用承诺
+>承诺需要的对象有2个，promise对象，用于接收关于未来结果的通知，deffered对象，用于发送通知。  
+AngularJS提供了**$q**服务来获取和管理承诺。下面列出$q服务定义的方法
+* all(promises) 当指定的数组中有所有承诺被解决或者其总好难过任一被拒绝时返回承诺
+* defer() 创建defered对象
+* reject(reason)
+* when(value) 在总能被解决的承诺中封装一个值（指定值作为结果）
+
+8.4.1 获取和使用Defered对象
+> 通过$q.defer()方法获取deferred对象，下列是deferred的方法和属性
+* resolve(result) 带有指定值的延迟活动完成的信号
+* reject(reason)   延迟活动失败了或由于特定原因将不被完成的信号
+* notify(result) 提供来自延迟活动的临时结果
+* promise 返回接受其他方法信号的promise对象
+   > promise对象定义的方法  then(success,error,notify)   catch(error)  finally(fn)
+
+# REST服务  不多做介绍，21章
+
+
