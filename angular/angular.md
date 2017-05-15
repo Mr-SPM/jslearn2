@@ -957,4 +957,5 @@ $scope.handleSwipe=function(direction){
 }
 </script>
 <div ng-swipe-right="handleSwipe('left-to-right')" ng-swipe-left ="handleSwipe('right-to-left')"></div>
+<span>Swipe was:{{swipeType}}</span>
 ```

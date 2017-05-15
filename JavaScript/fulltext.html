@@ -33,8 +33,19 @@
         
     </select>
     <li ng-repeat="item in items | limitTo:5/limitVal">item.value</li>
-    <input type="text" ng-model="dangerousData"/>
+    <input type="text" ng-model="dangerousData" />
     <p ng-bind-html="htmlData"></p>
 </body>
+<style tpye="text/css">
+    .ngFade.ng-enter {
+        transition: 0.1s linear all;
+        opacity: 0
+    }
+    .ngFade.ng-enter-active {
+        opacity: 1
+    }
+</style>
+<div ng-view class="ngFade"></div>
+<div ng-swipe-right="handleSwipe('left-to-right')" ng-swipe-left ="handleSwipe('right-to-left')"></div>
 
 </html>
