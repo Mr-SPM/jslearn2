@@ -926,8 +926,35 @@ $scope.$on("$routeChangeSuccess",function(){
 })
 ```
 
+# 十、动画和触摸服务
+10.1 动画元素 安装ngAnimation模块
+10.2 定义并应用动画
+> 不要直接使用$animate服务应用在动画上。反而，用CSS定义动画或转变，接着专门规范的名字，然后在元素上应用那些名字作为class。下列是支持动画的内置指令及与之相关的名称
+* ng-repeat enter、leave、move
+* ng-view/ng-include/ng-switch/ng-if enter、leave
+* ng-class/ng-show/ng-hide add、remove
+```html
+<style tpye="text/css">
+    .ngFade.ng-enter {
+        transition: 0.1s linear all;
+        opacity: 0
+    }
+    .ngFade.ng-enter-active {
+        opacity: 1
+    }
+</style>
+<div ng-view class="ngFade"></div>
+```
+10.2.1 避免平行动画的危险 
 
-
-
-
-
+10.3 支持触摸事件
+10.3.1 安装ngTouch模块
+10.3.2 处理触控手势
+```html
+<script>
+$scope.handleSwipe=function(direction){
+    $scope.swipeType=direction;
+}
+</script>
+<div ng-swipe-right="handleSwipe('left-to-right')" ng-swipe-left ="handleSwipe('right-to-left')"></div>
+```
