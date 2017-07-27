@@ -500,20 +500,26 @@ window.moveBy(-50, 0); //窗口向左移动50像素
 // 窗口大小
 // innerHeight,innerWidth, outerHeight,outerWidth 表示窗口的尺寸不一
 // 页面视口大小
-if (document.readyState == 'complete') {
+function getWindowSize() {
     var pageHeight = window.innerHeight;
-    var pageWidth = window.innerWidth;
     if (typeof pageWidth != 'Number') {
         if (document.compatMode == 'CSS1Compat') {
-            pageWidth = document.documentElement.clientWidth;
-            pageHeight = document.documentElement.clientHeight;
+            return {
+                pageHeight: document.documentElement.clientWidth,
+                pageWidth: document.documentElement.clientHeight
+            }
         } else {
-            pageWidth = document.body.clientWidth;
-            pageHeight = document.body.clientHeight;
+            return {
+                pageHeight: document.body.clientWidth,
+                pageWidth: document.body.clientHeight
+            }
         }
     }
+    return {
+        pageHeight: pageHeight,
+        pageWidth: window.innerWidth
+    }
 }
-
 // 改变窗口大小 resizeTo , resizeBy  在浏览器中可能会被禁用，eg： Opera 和IE7+
 
 // 导航和打开窗口 window.open()
@@ -557,10 +563,18 @@ var dialog = {
         window.alert(str);
     },
     promt: function (str) {
-        window.prompt(str);
+        var inp = window.prompt(str);
+        // 返回用户输入值
+        console.log(inp);
     },
     comfirm: function (str) {
-        window.confirm(str);
+        var defaultstr = '默认输入项';
+        var flag = window.confirm(str, defaultstr);
+        if (flag) {
+            // 点击确认执行 fn
+        } else {
+            // 点击取消执行 fn
+        }
     }
 
 }

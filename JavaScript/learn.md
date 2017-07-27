@@ -10,7 +10,7 @@
 > JavaScript不区分整数值和浮点数值，所有数字均用浮点数值表示  
 十进制，十六进制（0x）
 > 传统算数运算符 ： +，-，*，/，%
-```
+```js
 // 遍历math 类所有方法
 Object.getOwnPropertyNames(Math)
 // 特殊
@@ -36,7 +36,7 @@ num1 === num2 //false
 > 通常将对象称为引用类型（reference type），对象值都是引用，对象的比较是引用的比较，当且仅当他们引用同一个基对象时，才相等
 ## 类型转换
 ### 显示类型转换
-``` 最简单方法
+```js 最简单方法
 Number('3')   // 3
 String(false)  // 'false'
 Boolean([])  // true
@@ -163,7 +163,7 @@ var o = {
 > **存取器属性是可以继承的**
 
 ## 序列化对象
-```
+```js
 //对象序列化
 JSON.stringify(o);
 JSON.parse('{"x":1}');
@@ -171,14 +171,14 @@ JSON.parse('{"x":1}');
 
 # 数组
 > 如果算法依赖于遍历的顺序，最好不要使用for/in而用常规的for循环
-``` 数组方法遍历
+```js 数组方法遍历
 Object.getOwnPropertyNames(Array.prototype)
 ```
 > ES5 新增数组方法  
 > forEach,map,filter,every,some,reduce,reduceRight,indexOf,lastIndexOf
 ## 数组类型
 ES 新增方法:
-```
+```js
 var newArray=[];
 Array.isArray(newArray); // true
 ```
@@ -194,7 +194,7 @@ Array.isArray(newArray); // true
 > this 是一个关键字，不是变量，也不是属性名。JavaScript 的语法不允许给this 赋值。  
 > this 没有作用域限制，嵌套的函数不会从调用它的函数中继承this。如果嵌套函数作为方法调用，其this的值指向调用他的对象。如果嵌套函数作为函数调用，其this值不是全局对象（非严格模式）就是undefined（严格模式下）。  
 > 如果想访问这个外部函数的this 值，需要将this 的值保存在一个变量里。
-```
+```js
 // 嵌套函数调用外部函数this eg
 var o = {
     m: function () {
@@ -214,7 +214,7 @@ o.m();
 > 没有形参的构造函数调用都可以省略圆括号  new Object === new Object()
 ## 可变长的实参列表
 > 当调用函数的时候传入的实参个数超过了函数定义时形参个数时，没有办法直接获得未命名值的引用。参数对象可以解决这个问题。在函数体内，标识符**arguments**是指向实参对象的引用，实参对象是一个类数组对象，可以通过数字下标访问传入函数的实参值。*这种函数也称为（不定实参函数）*
-```
+```js
 // 实参和形参不匹配情况
 function f(x) {
     if (arguments.length == 1) {
@@ -232,7 +232,7 @@ function f(x) {
 > 严格模式中，对这两个属性的读写操作会产生一个类型错误。    
 > 非严格模式中，callee 属性指代当前正在执行的函数。caller是非标准的，指代调用当前正在执行的函数的函数  *在一个函数调用另一个函数时，被调用函数会自动生成一个caller属性，指向调用它的函数对象。如果该函数当前未被调用，或并非被其他函数调用，则caller为null*  
 ## 闭包
-``` 
+```js 
 // 闭包
 function counter() {
     var n = 0;
@@ -255,7 +255,7 @@ d.count();  // 1
 // 每次调用counter() 都会创建一个新的作用域链和一个新的私有变量。
 ```
 ## bind()方法 （将函数绑定至某个对象）
-```
+```js
 function f(y) {
     return this.x + y;
 }
@@ -279,3 +279,4 @@ g(3) // 6
 
 # BOM
 ## window对象
+
