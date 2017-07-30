@@ -273,7 +273,7 @@ Symbol.keyFor方法返回一个已登记的 Symbol 类型值的key。
 */
 /* Set 类似于数组，但是成员的值都是唯一的。
 Set 本身是一个构造函数，
-属性： prototype,默认就是Set， size 返回实力成员的总数（访问器，不可写）
+属性： prototype,默认就是Set， size 返回实例成员的总数（访问器，不可写）
 方法：　　add(value) 加入重复值会失败,加入时不会发生类型转换，所以 5 和 '5' 为不同值，判断标准类似与 === , 但是NaN 等于自身
          delete(value) 删除某个值，返回一个布尔值表示是否成功
          has (value) 表示某个值是否是Set成员，返回布尔值
@@ -315,7 +315,7 @@ function UIDtest(set1, set2) {
   }
 }
 /* WeakSet 与Set类似，也是不重复的值的集合，区别:
-    1. WeakSet的成员只能是对象，而不能是其他类型的值】
+    1. WeakSet的成员只能是对象，而不能是其他类型的值
     2. WeakSet中的对象都是弱引用，如果其他对象都不再引用该对象，那么对象会被回收，即时WeakSet 仍然存在与WeakSet中 
     WeakSet作为构造函数，可以接受所有具有Iterable接口的对象
     方法： add delete value  没有size ，不能遍历

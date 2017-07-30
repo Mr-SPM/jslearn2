@@ -986,7 +986,7 @@ btn.removeEventListener('click', fun, false); // 生效
 //btn.attachEvent('onclick', fun);
 //btn.detachEvent('onclick', fun);
 
-/* 事件对象 event 声明周期：只有在事件处理程序执行期间存在，结束就销毁
+/* 事件对象 event 生命周期：只有在事件处理程序执行期间存在，结束就销毁
  包含属性 bubbles 事件是否冒泡，cancelable, currentTarget 正在处理事件的那个元素,defaultPrevented 是否调用了preventDefault() DOM3级事件中新增，detail , eventPhase 事件处理程序阶段  1.捕获阶段 2 处于目标 3 冒泡阶段  preventDefault() 取消事件的默认行为，stopImmediatePropagation(), stopPropagation() 取消时间的进一步捕获或冒泡， target 事件的目标 , trusted true：浏览器生成，false: js 创建生成  , type 被触发的事件类型, view 与事件关联的抽象视图 
  */
 // 事件冒泡测试，可取消冒泡
@@ -1250,6 +1250,7 @@ document.getElementById('myDelegation').addEventListener('click', function () {
     DOM虽然改变删除，但是没有删除dom对应的事件处理程序。最好手动删除，可以使用onunload 事件处理程序进行移除
  */
 
+
 /* 模拟事件
     document 对象上使用 createEvent() 创建event对象，这个方法接受一个参数，即要创建的事件类型的字符串。
     DOM2                       DOM3
@@ -1480,7 +1481,7 @@ function paint() {
         context2d.fillRect(0, 0, 20, 20);
         // 红色半透明矩阵
         context2d.fillStyle = 'rgba(255, 0, 0, 0.5)';
-        context2d.fillRect(10, 10, 30, 30);
+        context2d.fillRect(10, 10, 30, 3
         // 交界处黑色描边修改lineWidth 和 lineCap 线条末端形状
         context2d.strokeStyle = "black";
         context2d.strokeRect(10, 10, 10, 10);
