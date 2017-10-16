@@ -40,7 +40,7 @@ myApp.directive('ExampleDirective',function(){
 > 当遇到HTML中的指令时AngularJS就会调用其中的工人函数   
 element参数是一个jqLite对象
 
-### 定义过滤取 Module.filter(name,factory)
+### 定义过滤器 Module.filter(name,factory)
 ```js
 examApp.filter('StringFormat',function(){
     return function(str){
