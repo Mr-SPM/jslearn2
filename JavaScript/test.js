@@ -2056,3 +2056,15 @@ function userCursor(tableName) {
         throw new Error('something bad had happened!');
     }
 }
+// 对象拼接字符串
+function obj2searchURL(obj) {
+    if (obj && typeof obj == 'object') {
+        var str = '?'
+        for (var item in obj) {
+            str += item + '=' + obj[item]+'&';
+        };
+        return encodeURIComponent(str.trimEnd('&'));
+    } else {
+        throw new Error('you params is not an object')
+    }
+}
