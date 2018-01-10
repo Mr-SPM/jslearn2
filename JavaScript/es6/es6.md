@@ -23,6 +23,38 @@ class LetTest {
 }
 var letTest = new LetTest();
 ```
+# 解构赋值
+## 数组的解构赋值
+只要某种数据结构具有Iterator接口，都可以采用数组形式的解构赋值  
+```js
+let [x, y] = [1, 2, 3];
+x // 1
+y // 2
+let [a, [b], d] = [1, [2, 3], 4];
+a // 1
+b // 2
+d // 4
+```
+### 默认值
+*ES6 内部使用严格相等运算符（===），判断一个位置是否有值。所以，如果一个数组成员不严格等于undefined，默认值是不会生效的。*  
+```js
+let [x, y = 'b'] = ['a']; // x='a', y='b'
+let [x = 1] = [undefined];
+x // 1
+let [x = 1] = [null];
+x // null
+```
+## 对象的解构赋值
+与数组不同，数组的元素是按次序排列的，变量的取值由他的位置确定；而对象的属性没有次序，变量不许与属性同名，才能取到正确的值；
+```js
+let { bar, foo } = { foo: "aaa", bar: "bbb" };
+foo // "aaa"
+bar // "bbb"
+
+let { baz } = { foo: "aaa", bar: "bbb" };
+baz // undefined
+```
+
 ## 字符串拓展
 ```js
 class StringES6 {
