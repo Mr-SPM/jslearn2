@@ -16,4 +16,15 @@ var formData = new FormData();
 7. keys
 8. set
 9. values
+## 构建方法
+```js
+let transformRequest = (data) => {
+    let formData = new FormData();
+    for (let item in data) {
+        formData.append(item, data[item]);
+    }
+    return formData;
+}
+```
+*[MDN:for...in 方法详解](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/for...in)*
 ---
