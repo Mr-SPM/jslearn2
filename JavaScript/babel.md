@@ -3,7 +3,7 @@
 从宏观角度看，它将运行代码分为3个阶段: 解析，转换，及生成(与其他编译器相同)。   
 初始阶段，Babel 并没有做任何事情。它基本上就相当于 const babel = code => code;，先解析代码，然后再次生成相同的代码。  
 你可以为 Babel 添加一些插件让其去做任何事情(插件会影响 Babel 的第 2 阶段，转换)。
-## 简易配置(浏览器) .babelrc
+## 简易配置 .babelrc
 ```json
 {
   "presets": [
@@ -116,3 +116,21 @@ npm install --save-dev babel-plugin-external-helpers
 4. 语法 Plugin
 这些 plugin 允许 Babel 解析特定类型的语法(不转译)。
 5. [开发Plugin](https://github.com/jamiebuilds/babel-handbook/blob/master/translations/zh-Hans/plugin-handbook.md)
+
+## PolyFill
+> 由于 Babel 只转换语法(如箭头函数)， 你可以使用 babel-polyfill 支持新的全局变量，例如 Promise 、新的原生方法如 String.padStart (left-pad) 等。 它使用了 core-js 和 regenerator。 查看 babel-polyfill 文档获取更多信息。
+1. 安装
+```
+npm install --save babel-polyfill
+```
+2. 在 Node / Browserify / Webpack 中使用
+```js
+require("babel-polyfill");
+import "babel-polyfill";
+// 在 webpack.config.js 中，将 babel-polyfill 加到你的 entry 数组中
+module.exports = {
+  entry: ["babel-polyfill", "./app/js"]
+};
+```
+3. 在浏览器中使用  
+可以在 babel-polyfill npm 发布版中的 dist/polyfill.js 文件中找到它。 它需要在你编译过的 Babel 代码之前被包括进去。你可以将它追加到你编译过的代码中，或者在这些代码之前通过 <script> 引入它。
