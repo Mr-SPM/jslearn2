@@ -3,6 +3,18 @@
 从宏观角度看，它将运行代码分为3个阶段: 解析，转换，及生成(与其他编译器相同)。   
 初始阶段，Babel 并没有做任何事情。它基本上就相当于 const babel = code => code;，先解析代码，然后再次生成相同的代码。  
 你可以为 Babel 添加一些插件让其去做任何事情(插件会影响 Babel 的第 2 阶段，转换)。
+## 简易配置(浏览器) .babelrc
+```json
+{
+  "presets": [
+    ["env", {
+      "modules": false
+    }],
+    "stage-2"
+  ],
+  "plugins": ["transform-runtime"]
+}
+```
 ## 插件
 1. Presets   
 ### Official Presets 公用插件  
