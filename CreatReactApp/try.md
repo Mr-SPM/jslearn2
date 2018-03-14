@@ -431,4 +431,267 @@ if (process.env.NODE_ENV !== 'production') {
 ```
 请注意，上述部分的注意事项适用于：  
 + 除了一些内置变量（NODE_ENV和PUBLIC_URL）之外，变量名称必须以REACT_APP_开始工作。
-+ 环境变量是在构建时注入的。如果您需要在运行时注入它们，请改为使用此[方法](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#generating-dynamic-meta-tags-on-the-server)。
++ 环境变量是在构建时注入的。如果您需要在运行时注入它们，请改为使用此[方法](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#generating-dynamic-meta-tags-on-the-server)。  
+
+## Adding Temporary Environment Variables In Your Shell 在Shell中添加临时环境变量
+定义环境可能因操作系统而异。所以了解这种方式在暂时存在在 Shell session 中的也很重要。  
+```
+// Windows(cmd.exe)
+set "REACT_APP_SECRET_CODE=abcdef" && npm start
+// （注意：变量赋值周围的引号需要避免尾随空格。）  
+
+// Windows (Powershell)
+($env:REACT_APP_SECRET_CODE = "abcdef") -and (npm start)
+
+// Linux, macOS (Bash)
+REACT_APP_SECRET_CODE=abcdef npm start
+```
+
+## Adding Development Environment Variables In .env 
+> 此功能在 react-scripts@0.5.0 或者更高版本可用。  
+
+在项目根目录定义**.env**文件用来定义永久环境变量。
+```
+REACT_APP_SECRET_CODE=abcdef
+```
+> 注意：你必须已**React_APP_**开头创建自定义环境变量。任何除了**NODE_ENV**之外的其他变量将会被忽略，以避免偶然暴露机器上可能具有相同名称的私钥。任何环境变量的更改都需要重启开发服务器才能生效。  
+
+.env文件应该被检入源代码管理（不包括.env * .local）。  
+
+哪些其他.env文件可以被使用？  
+> 注意：此功能在react-scripts@1.0.0或者更高版本可用。  
++ .env: 默认
++ .env.local 本地覆盖。除了测试环境，所有环境都会加载。
++ .env.development,.env.test,.env.production: 特殊环境设置。
++ .env.development.local, .env.test.local, .env.production.local: 本地覆盖特定于环境的设置。  
+
+左侧的文件比右侧的文件优先：
++ npm start: .env.development.local, .env.development, .env.local, .env
++ npm run build: .env.production.local, .env.production, .env.local, .env
++ npm test: .env.test.local, .env.test, .env (note .env.local is missing)  
+
+如果机器没有明确设置它们，这些变量将作为默认值。  
+请查询[dotenv documentation](https://github.com/motdotla/dotenv)查阅更多细节内容。  
+> 注意：如果您正在为开发定义环境变量，则您的CI和/或托管平台很可能也需要定义这些变量。请参阅他们的文档如何做到这一点。例如，请参阅Travis CI或Heroku的文档。  
+
+## Expanding Environment Variables In .env 在.env中拓展环境变量
+> 注意：此功能在react-scripts@1.1.0或更高版本可用。  
+拓展您的机器上已有的变量以用于.env文件（使用[dotenv-expand](https://github.com/motdotla/dotenv-expand)）。  
+
+比如，获取npm_package_version环境变量：  
+```
+REACT_APP_VERSION=$npm_package_version
+# also works:
+# REACT_APP_VERSION=${npm_package_version}
+```
+或者将本地的变量扩展到当前的.env文件中：  
+```
+DOMAIN=www.example.com
+REACT_APP_FOO=$DOMAIN/foo
+REACT_APP_BAR=$DOMAIN/bar
+```  
+
+# Can I Use Decorators?  可不可以使用装饰器？
+很多流行的库都在他们的文档中使用了装饰器。但是Create React App 目前不支持 decorator 语法，因为：  
++ 这是一个试验性提案，之后可能会被更改。
++ 目前的规范版本没有得到Babel的正式支持。
++ 如果规范更改，我们不可能去写 codemod ，因为我们不在Facebook内部使用他们。  
+
+然而在很多情况下，你可以同样写出不使用decorator的代码基于decorator的代码。请参考下面2个issue。  
++ [#214](https://github.com/facebook/create-react-app/issues/214)
++ [#411](https://github.com/facebook/create-react-app/issues/411)  
+
+Create React App 将会支持decorator在规范版本变为一个稳定阶段(stable stage).  
+
+# Fetching Data with AJAX Requests  
+React 不规定用于fetching data的方法，但是开发者通常会使用比如[axios](https://github.com/axios/axios)这样的一个库或者由浏览器提供的[fetch() API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)。为了提供方便的操作，Create React App 包含了一个polyfill 用于**fetch()**，这样你就可以不用去担心浏览器支持问题了。  
+全局的fetch方法可以让你简单的使用AJAX请求。它使用一个url作为一个参数，然后返回一个Promise，在获取Response后resolves。你可以查阅更多关于[fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch)的信息。  
+这个项目还包括Promise polyfill，它提供Promises / A +的完整实现。 Promise表示异步操作的最终结果，您可以在[这里](https://www.promisejs.org/)和[这里](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise)找到有关Promise的更多信息。 axios和fetch()都使用Promise。 您还可以使用async/await语法来减少回调嵌套。  
+
+您可以在React网站上的[FAQ](https://reactjs.org/docs/faq-ajax.html)条目中了解更多关于从React组件发出AJAX请求的信息。  
+
+# Integrating with an API Backend 与API后端集成
+下面的教程讲帮助你将app运行在另一个端口上的API后端集成，并使用fetch()来访问他们。  
+
+## [Node](https://www.fullstackreact.com/articles/using-create-react-app-with-a-server/)  
+
+## [Ruby on Rails](https://www.fullstackreact.com/articles/using-create-react-app-with-a-server/)  
+
+
+# Proxying API Requests in Development 在开发环境代理API请求  
+> 此功能在react-scripts@0.2.3或更高版本可用  
+人们通常在同一主机和端口的前端React应用程序作为后端实施。
+例如：在部署应用程序之后，生产设置可能如下所示：  
+```
+/             - static server returns index.html with React app
+/todos        - static server returns index.html with React app
+/api/todos    - server handles any /api/* requests using the backend implementation
+```
+
+这样的设置不是必须的。然而，如果你确实按着类似的设置，那么很显然你写requests只需要像*fetch('/api/todos')*而不需要担心在开发中需要重定向到一个另外的主机或者端口。
+
+去让开发服务器代理发往API服务器的任何未知请求，你需要在**package.json**文件中添加一个**proxy**区域。例如:  
+```json
+"proxy": "http://localhost:4000",
+```
+通过这样的方式，当你在开发时fetch('/api/todos')，devServer将会识别这不是一个静态资源然后代理你的请求发往*http://localhost:4000/api/todos*。devServer将只会尝试去发没有**text/html**代理的发送request。  
+方便的是，这避免了CORS问题和这样的错误消息在开发中：  
+```
+Fetch API cannot load http://localhost:4000/api/todos. No 'Access-Control-Allow-Origin' header is present on the requested resource. Origin 'http://localhost:3000' is therefore not allowed access. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.
+```
+
+记住，proxy只会在开发环境生效（npm start），在生产环境中让urls指向正确的目标这取决于你自己。你不是必须使用*/api*前缀，任何无法识别的，没有text / html接受头的请求都会被重定向到指定的代理。  
+
+proxy 选项支持HTTP,HTTPS和 WebSocket 连接。
+如果proxy选项不够灵活，你可以：  
++ [自己配置proxy](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#configuring-the-proxy-manually)
++ 在你的服务器上允许CORS  
++ 在你的app中使用环境变量注入准确的主机和端口。  
+
+## "Invalid Host Header" Errors After Configuring Proxy
+当你采用proxy选项，就以为着你选择了一套更严格的主机检查。这是必须的因为让后端开着远程主机会让你的电脑受到DNS rebinding 攻击。这里的[ISSUE](https://github.com/webpack/webpack-dev-server/issues/887)和[文章](https://medium.com/webpack/webpack-dev-server-middleware-security-issues-1489d950874a)解释了这个行为。  
+
+在你启用了proxy后，如果你在你的localhost上面开发，这个错误将不会出现。但是如果你使用远程开发，你将会在浏览器看到这个错误。
+```
+Invalid Host header
+```
+
+如果去解决这个问题，你可以在项目根目录中的一个叫做**.env.development**文件内规定你的开发主机。  
+```
+HOST=mypublicdevhost.com
+```
+
+这样，如果你重启你的devServer，现在它应该就能够成功运行了。  
+如果，你仍然存在这个问题或者你正在使用一个更加怪异的开发环境，比如一个云端编辑器，你可以通过在**.env.development.local**中增加下面的代码绕过host check。**注意：这是一个危险的举动，这会暴露你的机器，遭受恶意网站执行代码的攻击**。
+```
+# NOTE: THIS IS DANGEROUS!
+# It exposes your machine to attacks from the websites you visit.
+DANGEROUSLY_DISABLE_HOST_CHECK=true
+```
+我们不建议使用这个方法。  
+
+## Configuring the Proxy Manually 手动配置proxy
+> 注意，此功能在react-scripts@1.0.0或更高版本可用。
+您也可以指定任何配置值[http-proxy-middleware](https://github.com/chimurai/http-proxy-middleware#options)或[http-proxy](https://github.com/nodejitsu/node-http-proxy#options)支持。  
+```json
+{
+  // ...
+  "proxy": {
+    "/api": {
+      "target": "<url>",
+      "ws": true
+      // ...
+    }
+  }
+  // ...
+}
+```
+所有匹配此路径的请求都将发往代理服务器，无一例外。**这包括对标准代理选项无法代理的text / html的请求。**  
+如果你需要规定一个复杂的代理，你可以像下面那样做，匹配的方式是使用正则表达式。所以你可以通过一个代理匹配多个路径。
+```json
+{
+  // ...
+  "proxy": {
+    // Matches any request starting with /api
+    "/api": {
+      "target": "<url_1>",
+      "ws": true
+      // ...
+    },
+    // Matches any request starting with /foo
+    "/foo": {
+      "target": "<url_2>",
+      "ssl": true,
+      "pathRewrite": {
+        "^/foo": "/foo/beta"
+      }
+      // ...
+    },
+    // Matches /bar/abc.html but not /bar/sub/def.html
+    "/bar/[^/]*[.]html": {
+      "target": "<url_3>",
+      // ...
+    },
+    // Matches /baz/abc.html and /baz/sub/def.html
+    "/baz/.*/.*[.]html": {
+      "target": "<url_4>"
+      // ...
+    }
+  }
+  // ...
+}
+```
+
+## Configuring a WebSocket Proxy
+当你需要设置WebSocked代理，你需要知道一些额外的注意事项。  
+如果你正在使用一个像[Socket.io](https://socket.io/)这类的WebSocket engine，你必须在你代理请求之前保证Socket.io服务正在运行。Socket.io不能用于标准的WebSocket服务器。具体来说，不要指望Socket.io与websocket.org echo test一起工作。  
+这里有一些[设置Socket.io](https://socket.io/docs/)的不错教程。  
+标准WebSocket将与标准WebSocket服务器以及websocket.org echo test一起使用。您可以在服务器中使用像[ws](https://github.com/websockets/ws)这样的库，并在浏览器中使用原生WebSockets。  
+无论哪种方式，你都可以在*package.json*中手动配置WebSocket请求代理。
+```
+{
+  // ...
+  "proxy": {
+    "/socket": {
+      // Your compatible WebSocket server
+      "target": "ws://<socket_url>",
+      // Tell http-proxy-middleware that this is a WebSocket proxy.
+      // Also allows you to proxy WebSocket requests without an additional HTTP request
+      // https://github.com/chimurai/http-proxy-middleware#external-websocket-upgrade
+      "ws": true
+      // ...
+    }
+  }
+  // ...
+}
+```
+
+## Using HTTPS in Development  
+> 此功能在react-scripts@0.4.0或更高版本可用  
+你可能需要devServer通过HTTPS提供页面。当这个API服务器本身服务于HTTPS时，使用["proxy"feature](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#proxying-api-requests-in-development)代理对API服务器的请求时，一个特别有用的情况就是这种情况。  
+如果需要这样做，设置HTTPS 环境变量为 true，之后正常npm start 启动devServer.
+```
+// windows(cmd.exe)
+set HTTPS=true&&npm start
+
+Windows (Powershell)
+($env:HTTPS = $true) -and (npm start)
+
+Linux, macOS (Bash)
+HTTPS=true npm start
+```
+注意，服务器会使用一个自签证书（a self-signed certificate），所以你的浏览器基本会显示一个警告在你尝试访问该页面的时候。  
+
+
+# Generating Dynamic <meta> Tags on the Server 生成动态的meta标签
+因为Create React App 不支持服务器渲染，你可能在想怎么去动态meta标签反应当前的URL。为了解决这个问题，我们建议你在你的HTML中增加一个**placeholders**，像这样：  
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta property="og:title" content="__OG_TITLE__">
+    <meta property="og:description" content="__OG_DESCRIPTION__">
+```
+然后，在服务器上，无论您使用的是什么后端，您都可以将index.html读入内存，并根据当前网址将值替换为__OG_TITLE__，__OG_DESCRIPTION__和任何其他占位符。 只要确保清理并转义插值，以便它们可以安全地嵌入到HTML中！  
+如果你使用node服务器，你甚至可以在客户端和服务器共享路由匹配逻辑。但是，在简单情况下复制它也可以正常工作。
+
+# Pre-Rendering into Static HTML Files  预渲染到静态HTML文件
+如果您使用静态托管提供程序托管构建，则可以使用[react-snapshot](https://www.npmjs.com/package/react-snapshot)或[react-snap](https://github.com/stereobooster/react-snap)为应用程序中的每个路由或相关链接生成HTML页面。当JavaScript bundle加载完成后，这些页面将无缝地变为活动或“hydrated”。  
+
+在静态托管之外还有机会使用这个功能，以便在生成和缓存路由时减轻服务器的压力。  
+
+使用预渲染的好处是你可以在HTML payload获取每个页面的核心内容，不用考虑在什么时候JavaScript bundle被成功加载。它也增加了你的应用程序的每条路由将被搜索引擎拾取的可能性。  
+您可以在这里阅读更多关于[零配置预渲染（也称为快照）](https://medium.com/superhighfives/an-almost-static-stack-6df0a2791319)。  
+
+
+# Injecting Data from the Server into the Page 
+与之前的某节类似，你可以在页面上留下几个**placeholders**让全局变量注入。比如：  
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <script>
+      window.SERVER_DATA = __SERVER_DATA__;
+    </script>
+```
+然后，在服务器上，您可以在发送响应之前将__SERVER_DATA__替换为实际数据的JSON。 客户端代码然后可以读取window.SERVER_DATA以使用它。 **确保在将JSON发送到客户端之前对其进行清理(sanitize)，因为它会使您的应用程序容易受到XSS攻击。**
