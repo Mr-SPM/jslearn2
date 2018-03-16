@@ -383,6 +383,7 @@ Object.defineProperty(oo, 'age', {
     }
 })
 // 继承
+// 原型链的问题为，包含引用类型的原型属性会被所有实例共享。
 function SuperType() {
     this.property1 = true;
 }
