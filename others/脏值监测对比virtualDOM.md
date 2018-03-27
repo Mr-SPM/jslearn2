@@ -133,7 +133,13 @@ $apply()函数接受一个可选的参数：
 
 Virtual DOM 本质上就是在 JS 和 DOM 之间做了一个缓存。可以类比 CPU 和硬盘，既然硬盘这么慢，我们就在它们之间加个缓存：既然 DOM 这么慢，我们就在它们 JS 和 DOM 之间加个缓存。CPU（JS）只操作内存（Virtual DOM），最后的时候再把变更写入硬盘（DOM）。
 
-## 对比2棵树的差异
+## 对比2棵树的差异 DIFF
 virtual DOM 只会对同一个层级的元素进行对比，所以复杂度就是O(n)。
 深度优先遍历
-参考:https://www.zhihu.com/question/29504639
+参考:https://www.zhihu.com/question/29504639  
+利用递归函数深度遍历树，新的Vtree和旧的Vtree对比，将差异存储到patch中
+
+## 应用变更至实际DOM树 apply patch
+区分patch的变化类型（删除，标签更换，增加等）。应用实际dom操作。中间还会有对于比如列表的最小变更编辑算法。 
+
+所以说，实际上Virtual DOM 就是一个JS对象，只是他的结构严格映射实际DOM。
