@@ -54,6 +54,5 @@ export function fetchFriends() {
         return fetch('http://localhost/api/friends').then(response => response.json()).then(json => {
             dispatch({type:'RECEIVE_FRIENDS',payload:json})
         })
-        
     }
 }
