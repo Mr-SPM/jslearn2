@@ -287,6 +287,164 @@ end（可选）：到该位置前停止读取数据，默认等于数组长度�
 Array.prototype.copyWithin(target, start = 0, end = this.length)
 [1, 2, 3, 4, 5].copyWithin(0, 3) // [4, 5, 3, 4, 5]
 ```
+
+# 对象的拓展
+## Object.create(proto，propertiesObject)
+该方法创建一个新对象，使用现有的对象来提供新创建对象的__proto__。  
+第二个参数是要添加到新创建对象的可枚举属性。
+```js
+o = Object.create(Object.prototype, {
+  // foo会成为所创建对象的数据属性
+  foo: { 
+    writable:true,
+    configurable:true,
+    value: "hello" 
+  },
+  // bar会成为所创建对象的访问器属性
+  bar: {
+    configurable: false,
+    get: function() { return 10 },
+    set: function(value) {
+      console.log("Setting `o.bar` to", value);
+    }
+  }
+});
+```
+
+##  Object.assign()
+该方法用于对象的合并。将源对象的所有可枚举属性复制到目标对象。  
+该方法的第一个参数是目标对象，后面的参数不限制数量，都是源对象。**多个源对象如果有同名属性，那么后面的属性会覆盖前面的属性**
+>注意： 如果只有一个参数，该方法会直接返回该参数（而不是一个新的对象）。如果参数不是对象，则会先转成对象再返回。由于**undefined**和**null**无法转换为对象，所以会报错。如果源对象是无法转为对象的值则会被跳过。**这里注意，字符串会已数组形式拷贝入目标参数。**
+```js
+const str = 'abc';
+const obj = Object.assign({},str); // {"0":"a","1":"b","2":"c"}
+```
+> 注意： Object.assign()拷贝的属性是有限制的，不拷贝继承属性，也不拷贝不可枚举属性。属性名为Symbol值的属性也会被拷贝。  
+**Object.assign()**执行的是浅拷贝，所以如果属性是一个引用对象。那么目标对象同样会获得该对象的引用。  
+**Object.assign()**会被数组视为对象。
+**Object.assign()**如果要复制的值是一个取值函数，那么将会求职后再复制。
+
+## 对象的遍历
+1. for...in循环  遍历对象自身和继承的所有可枚举属性
+2. Object.keys() 返回一个数组，包括对象你给自身的所有可枚举属性（不含Symbol）
+3. JSON.stringify() 
+4. Object.assign()
+5. Object.getOwnPropertyNames() 返回一个数组，包含对象自身的所有属性的键名（不含Symbol，但包含不可枚举属性）
+6. Object.getOwnPropertySymbols(obj) 返回一个数组，包含对象自身的所有Symbol属性的键名
+7. Reflect.ownKeys(obj) 返回一个数组，包含对象自身的所有键名。Symbol，可枚举，不可枚举。
+
+## Object.getOwnPropertyDescriptors()
+该方法会返回某个对象所有属性的描述对象。  
+该方法引入的目的主要是为了解决Object.assign()无法正确拷贝get属性和set属性的问题
+```js
+const source = {
+  set foo(value) {
+    console.log(value);
+  }
+};
+
+const target1 = {};
+Object.assign(target1, source);
+
+// 方法没有成功拷贝source的赋值setter函数。
+Object.getOwnPropertyDescriptor(target1, 'foo')
+// { value: undefined,
+//   writable: true,
+//   enumerable: true,
+//   configurable: true }
+
+// 配合描述对象，和Object.defineProperties方法，实现正确拷贝
+const source = {
+  set foo(value) {
+    console.log(value);
+  }
+};
+
+const target2 = {};
+Object.defineProperties(target2, Object.getOwnPropertyDescriptors(source));
+Object.getOwnPropertyDescriptor(target2, 'foo')
+// { get: undefined,
+//   set: [Function: set foo],
+//   enumerable: true,
+//   configurable: true }
+
+// 上下2者合并
+const shallowMerge = (target, source) => Object.defineProperties(
+  target,
+  Object.getOwnPropertyDescriptors(source)
+);
+```
+
+Object.getOwnPropertyDescriptors方法的另一个用处，是配合Object.create方法，将对象属性克隆到一个新对象。这属于浅拷贝。
+```js
+const shallowClone = (obj) => Object.create(
+  Object.getPrototypeOf(obj),
+  Object.getOwnPropertyDescriptors(obj)
+);
+```
+
+## 原型对象操作方法
+### Object.setProtoTypeOf() Object.getProtoTypeOf()
+```js
+Object.setProtoTypeOf(obj,prototype);
+// 举例
+let proto = {};
+let obj = { x: 10 };
+Object.setPrototypeOf(obj, proto);
+
+proto.y = 20;
+proto.z = 40;
+
+obj.x // 10
+obj.y // 20
+obj.z // 40
+// 读取原型对象
+Object.getPrototypeOf(obj) // {'y':20,'z':40}
+```
+
+## super关键字
+**super关键字总是指向对象的原型对象**
+> super关键字表示原型对象时，只能存在于对象的方法中。不然会报错
+```js
+// 报错，本质上是函数内使用super，再赋值到foo
+const obj = {
+  foo: function () {
+    return super.foo
+  }
+}
+
+// 正确
+const obj = {
+  foo: 'world',
+  find() {
+    return super.foo;
+  }
+};
+Object.setPrototypeOf(obj, proto);
+```
+
+## Object.keys(),Object.values(),Object.entries()
+1. Object.keys()
+2. Object.values()
+3. Object.entries()
+
+```js
+let {keys, values, entries} = Object;
+let obj = { a: 1, b: 2, c: 3 };
+
+for (let key of keys(obj)) {
+  console.log(key); // 'a', 'b', 'c'
+}
+
+for (let value of values(obj)) {
+  console.log(value); // 1, 2, 3
+}
+
+for (let [key, value] of entries(obj)) {
+  console.log([key, value]); // ['a', 1], ['b', 2], ['c', 3]
+}
+```
+
 # Symbol
 1. Symbol 作为属性名，该属性不会出现在for...in、for...of循环中，也不会被Object.keys()、Object.getOwnPropertyNames()、JSON.stringify()返回。  
 **Reflect.ownKeys() 可以返回所有类型的键名**
@@ -442,6 +600,39 @@ for...of 可正确识别32位UTF-16字符
 for...of 的优点:
 1. 对比es5 forEach() 他可以与break、continue 和 return 配合使用
 2. 对比for ...in 他不会手动添加其他键，而且循环顺序是指定的。
+
+```js
+// 遍历数组
+const array = ['a','b'];
+for(let [index,item] of array.entries()){
+  console.log(index, item);
+}
+// 遍历对象，不同的是entries等方法定义在Object上，而不是实例上
+const obj = { a: 1,b:2};
+for(let [key,value] of Object.entries(obj)){
+  console.log(key,value)
+}
+```
+
+# Proxy
+Proxy 用于修改某些操作的默认行为，等同于在语言层面做出修改，所以属于一种“元编程”（meta programming），即对编程语言进行编程。  
+```js
+// target 修改默认操作的对象
+// 定制拦截行为的对象
+var proxy = new Proxy(target,handler);、
+
+// eg: 拦截了读取属性的行为。
+var proxy = new Proxy({}, {
+  get: function(target, property) {
+    return 35;
+  }
+});
+
+proxy.time // 35
+proxy.name // 35
+proxy.title // 35
+```
+> 注意： **要拦截目标的操作，必须针对Proxy实例进行操作，而不是目标对象**
 
 # Reflect
 ##设计目的：  
