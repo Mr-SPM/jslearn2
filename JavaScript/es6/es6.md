@@ -632,7 +632,55 @@ proxy.time // 35
 proxy.name // 35
 proxy.title // 35
 ```
-> 注意： **要拦截目标的操作，必须针对Proxy实例进行操作，而不是目标对象**
+> 注意： 要拦截目标的操作，**必须针对Proxy实例进行操作**，而不是目标对象。
+
+## 在object对象上调用。
+```js
+var object = { proxy: new Proxy(target, handler) };
+```
+Proxy实例也可以作为其他对象的原型对象：
+```js
+var proxy = new Proxy({}, {
+  get: function(target, property) {
+    return 35;
+  }
+});
+
+let obj = Object.create(proxy);
+obj.time // 35
+```
+## Proxy支持的拦截操作
+target 目标对象，propKey 属性名， receiver proxy实例本身（操作行为所针对的对象）
+1. get(target,propKey,receiver)
+2. set(target,propKey,value,receiver)
+3. has(target,propKey) 拦截propKey in proxy操作，返回一个布尔值
+4. deleteProperty(target,propKey,receiver) 拦截delete proxy[propKey]的操作，返回一个布尔值
+5. ownKeys(target) 拦截Object.getOwnPropertyNames(proxy)、Object.getOwnPropertySymbols(proxy)、Object.keys(proxy)，返回一个数组。该方法返回目标对象所有自身的属性的属性名，而Object.keys()的返回结果仅包括目标对象自身的可遍历属性。
+6. getOwnPropertyDescriptor(target,propKey) 拦截Object.getOwnPropertyDescriptor(proxy, propKey)，返回属性的描述对象。
+7. defineProperty(target,propKey,propDesc) 拦截Object.defineProperty(proxy, propKey, propDesc）、Object.defineProperties(proxy, propDescs)，返回一个布尔值。
+8. preventExtensions(target)  拦截Object.preventExtensions(proxy)，返回一个布尔值。
+9. getPrototypeOf(target) 拦截Object.getPrototypeOf(proxy)，返回一个对象。
+10. isExtensible(target,propKey,receiver) 拦截Object.isExtensible(proxy)，返回一个布尔值。
+11. setPrototypeOf(target,propKey) 拦截Object.setPrototypeOf(proxy, proto)，返回一个布尔值。如果目标对象是函数，那么还有两种额外操作可以拦截。
+12. apply(target,object,args) 拦截 Proxy 实例作为函数调用的操作，比如proxy(...args)、proxy.call(object, ...args)、proxy.apply(...)。
+13. construct(target,args) 拦截 Proxy 实例作为构造函数调用的操作，比如new proxy(...args)。
+
+## Proxy.revocable()
+// 返回一个可取消的Proxy实例
+```js
+let target = {};
+let handler = {};
+
+let {proxy, revoke} = Proxy.revocable(target, handler);
+
+proxy.foo = 123;
+proxy.foo // 123
+
+revoke();
+proxy.foo // TypeError: Revoked
+```
+
+## this指向Proxy实例。
 
 # Reflect
 ##设计目的：  
@@ -688,6 +736,9 @@ function isYoung(target) {
 observe(print);
 observe(isYoung);
 ```
+
+# Decorator 装饰器
+现在仅为提案。不提倡用。以后再更新
 
 # Promise
 Promise 是异步编程的一种解决方案，比传统的解决方案- 回调函数和事件 -更合理和更强大。
