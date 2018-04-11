@@ -1468,6 +1468,27 @@ document.querySelector('#initSelect').onclick = initSelectT;
  */
 var mycanvas = document.getElementById('mycanvas');
 document.getElementById('paintBtn').onclick = paint;
+// canvas 方法抽出
+function paintRect(target, style, params = { x: 0, y: 0, width: 100, height: 100 }, arc) {
+    if (target && (ctx = target.getContext('2d'))) {
+        if (arc == undefined) {
+            ctx.fillStyle = style;
+            ctx.fillRect(...params);
+        } else {
+            const tWidth = width - 2 * arc - x;
+            const tHeight = height - 2 * arc - y;
+            ctx.beginPath();
+            ctx.moveTo(x + arc, y);
+            ctx.lineTo(tWidth, y);
+            ctx.arc(x+tWidth, arc+y, arc, 0, Math.PI * 1 / 4, true);
+            ctx.lineTo(width - arc, tHeight);
+            ctx.arc(width - arc, height - 2 * arc, arc, 90, Math.PI * 1 / 4, true);
+            ctx.lineTo(params[])
+            ctx.stroke();
+
+        }
+    }
+}
 // 检测canvas支持
 function paint() {
     if (mycanvas.getContext) {
@@ -1482,7 +1503,7 @@ function paint() {
         context2d.fillRect(0, 0, 20, 20);
         // 红色半透明矩阵
         context2d.fillStyle = 'rgba(255, 0, 0, 0.5)';
-        context2d.fillRect(10, 10, 30, 3
+        context2d.fillRect(10, 10, 30, 3);
         // 交界处黑色描边修改lineWidth 和 lineCap 线条末端形状
         context2d.strokeStyle = "black";
         context2d.strokeRect(10, 10, 10, 10);
@@ -2062,7 +2083,7 @@ function obj2searchURL(obj) {
     if (obj && typeof obj == 'object') {
         var str = '?'
         for (var item in obj) {
-            str += item + '=' + obj[item]+'&';
+            str += item + '=' + obj[item] + '&';
         };
         return encodeURIComponent(str.trimEnd('&'));
     } else {
