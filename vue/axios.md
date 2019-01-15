@@ -141,3 +141,25 @@ BASE_URL=/
 .env.procution
 BASE_URL=https://www.demo.com
 ```
+
+# 使用该接口
+```typescript
+// api/main.ts
+import request from '../utils/request';
+
+// get
+export function getSomeThings(params:any) {
+    return request({
+        url: '/api/getSomethings',
+    });
+}
+
+// post
+export function postSomeThings(params:any) {
+    return request({
+        url: '/api/postSomethings',
+        methods: 'post',
+        data: params
+    });
+}
+```
