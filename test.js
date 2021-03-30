@@ -14,3 +14,15 @@ let b = transformRequest(a);
 for (let item of b.entries()) {
     console.log(item)
 }
+
+
+state: {
+    form: {}
+}
+
+
+renderForm() {
+    for(let item of this.state.form) {
+        return dom
+    }
+}
